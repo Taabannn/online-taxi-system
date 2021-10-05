@@ -96,7 +96,7 @@ public class Passenger {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Passenger passenger = (Passenger) o;
-        return passengerId == passenger.passengerId && phoneNumber == passenger.phoneNumber && nationalCode == passenger.nationalCode && username.equals(passenger.username) && password.equals(passenger.password) && firstName.equals(passenger.firstName) && lastName.equals(passenger.lastName) && birthDate.equals(passenger.birthDate);
+        return phoneNumber == passenger.phoneNumber && nationalCode == passenger.nationalCode && username.equals(passenger.username) && password.equals(passenger.password) && firstName.equals(passenger.firstName) && lastName.equals(passenger.lastName) && birthDate.equals(passenger.birthDate);
     }
 
     @Override
