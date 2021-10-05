@@ -19,13 +19,13 @@ public class Main {
             System.out.println("7) exit");
             String choice = inputLine.nextLine();
             if (choice.equals("1")) {
-
+                onlineTaxiSys.addAGroupOfDrivers();
             } else if (choice.equals("2")) {
-
+                onlineTaxiSys.addAGroupOfPassengers();
             } else if (choice.equals("3")) {
-
+                onlineTaxiSys.driverSignupOrLogin();
             } else if (choice.equals("4")) {
-
+                onlineTaxiSys.passengerSignupOrLogin();
             } else if (choice.equals("5")) {
                 onlineTaxiSys.showAllDriversInformation();
             } else if (choice.equals("6")) {
@@ -35,18 +35,6 @@ public class Main {
             } else {
                 System.out.println("Invalid input command. Your choice must be an integer between 1 to 7.");
             }
-        /*Date date = new Date(2001 - 1900, 9 - 1, 9);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String DateStr = dateFormat.format(date);
-        System.out.println(DateStr);
-        String[] dateElements = DateStr.split("-");
-        int year = Integer.parseInt(dateElements[0]) - 1900;
-        int month = Integer.parseInt(dateElements[1]) - 1;
-        int day = Integer.parseInt(dateElements[2]);
-        Date date1 = new Date(year, month, day);
-        System.out.println(dateFormat.format(date1));*/
-            //long date = Date.parse("1999-9-8");
-            //System.out.println(date);
         }
     }
 }

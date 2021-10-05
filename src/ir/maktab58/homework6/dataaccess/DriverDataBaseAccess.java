@@ -33,9 +33,9 @@ public class DriverDataBaseAccess extends DataBaseAccess{
                             resultSet.getString("vehicle_model"), resultSet.getString("vehicle_color"),
                             resultSet.getString("vehicle_platenumber"));
                     passengersList.add(driver);
-                }
-                return passengersList;
-            } catch (SQLException | NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException | OnlineTaxiSysEx exception){
+                    }
+                    return passengersList;
+                } catch (SQLException | NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException | OnlineTaxiSysEx exception){
                 System.out.println(exception.getMessage());
             }
         }
@@ -69,7 +69,7 @@ public class DriverDataBaseAccess extends DataBaseAccess{
                 String birthDateStr = dateFormat.format(driver.getBirthDate());
                 Vehicle vehicle = driver.getVehicle();
                 String typeOfVehicle = getTypeOfVehicle(vehicle);
-                String sqlQuery = String.format("INSERT INTO passengers (driver_Id, username, password, first_name, last_name, birth_date, phone_number, national_code, vehicle_type, vehicle_model, vehicle_color, vehicle_platenumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                String sqlQuery = String.format("INSERT INTO drivers (driver_Id, username, password, first_name, last_name, birth_date, phone_number, national_code, vehicle_type, vehicle_model, vehicle_color, vehicle_platenumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 PreparedStatement pstmt = connection.prepareStatement(sqlQuery);
                 setPreparedStatement(pstmt, currentDriverId, driver, birthDateStr, typeOfVehicle, vehicle);
                 boolean result = pstmt.execute();
