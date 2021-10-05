@@ -5,6 +5,7 @@ import ir.maktab58.homework6.models.vehicles.Vehicle;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class Driver {
     private int driverId;
@@ -100,6 +101,19 @@ public class Driver {
 
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Driver driver = (Driver) o;
+        return phoneNumber == driver.phoneNumber && nationalCode == driver.nationalCode && username.equals(driver.username) && password.equals(driver.password) && firstName.equals(driver.firstName) && lastName.equals(driver.lastName) && birthDate.equals(driver.birthDate) && vehicle.equals(driver.vehicle);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(driverId, username, password, firstName, lastName, birthDate, phoneNumber, nationalCode, vehicle);
     }
 
     @Override

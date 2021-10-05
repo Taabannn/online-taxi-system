@@ -3,6 +3,7 @@ package ir.maktab58.homework6.models;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class Passenger {
     private int passengerId;
@@ -88,6 +89,19 @@ public class Passenger {
 
     public void setNationalCode(long nationalCode) {
         this.nationalCode = nationalCode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Passenger passenger = (Passenger) o;
+        return passengerId == passenger.passengerId && phoneNumber == passenger.phoneNumber && nationalCode == passenger.nationalCode && username.equals(passenger.username) && password.equals(passenger.password) && firstName.equals(passenger.firstName) && lastName.equals(passenger.lastName) && birthDate.equals(passenger.birthDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(passengerId, username, password, firstName, lastName, birthDate, phoneNumber, nationalCode);
     }
 
     @Override
