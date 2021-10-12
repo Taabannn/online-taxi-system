@@ -14,9 +14,10 @@ public class Main {
             System.out.println("2) Add a group of passengers");
             System.out.println("3) Driver signup or login");
             System.out.println("4) Passenger signup or login");
-            System.out.println("5) show a list of drivers");
-            System.out.println("6) show a list of passengers");
-            System.out.println("7) exit");
+            System.out.println("5) Show Ongoing Travels");
+            System.out.println("6) show a list of drivers");
+            System.out.println("7) show a list of passengers");
+            System.out.println("8) exit");
             String choice = inputLine.nextLine();
             if (choice.equals("1")) {
                 onlineTaxiSys.addAGroupOfDrivers();
@@ -26,11 +27,13 @@ public class Main {
                 onlineTaxiSys.driverSignupOrLogin();
             } else if (choice.equals("4")) {
                 onlineTaxiSys.passengerSignupOrLogin();
-            } else if (choice.equals("5")) {
-                onlineTaxiSys.showAllDriversInformation();
+            } else if (choice.equals("5")){
+                onlineTaxiSys.showOngoingTravels();
             } else if (choice.equals("6")) {
-                onlineTaxiSys.showAllPassengersInformation();
+                onlineTaxiSys.showAllDriversInformation();
             } else if (choice.equals("7")) {
+                onlineTaxiSys.showAllPassengersInformation();
+            } else if (choice.equals("8")) {
                 break;
             } else {
                 System.out.println("Invalid input command. Your choice must be an integer between 1 to 7.");

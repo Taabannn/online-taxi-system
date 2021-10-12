@@ -14,9 +14,10 @@ public class Passenger {
     private Date birthDate;
     private long phoneNumber;
     private long nationalCode;
+    private int balance;
+    private boolean stateOfAttendance;
 
-    public Passenger(int passengerId, String username, String password, String firstName, String lastName,
-                     Date birthDate, long phoneNumber, long nationalCode) {
+    public Passenger(int passengerId, String username, String password, String firstName, String lastName, Date birthDate, long phoneNumber, long nationalCode, int balance, boolean stateOfAttendance) {
         this.passengerId = passengerId;
         this.username = username;
         this.password = password;
@@ -25,6 +26,8 @@ public class Passenger {
         this.birthDate = birthDate;
         this.phoneNumber = phoneNumber;
         this.nationalCode = nationalCode;
+        this.balance = balance;
+        this.stateOfAttendance = stateOfAttendance;
     }
 
     public int getPassengerId() {
@@ -91,12 +94,28 @@ public class Passenger {
         this.nationalCode = nationalCode;
     }
 
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    public boolean isStateOfAttendance() {
+        return stateOfAttendance;
+    }
+
+    public void setStateOfAttendance(boolean stateOfAttendance) {
+        this.stateOfAttendance = stateOfAttendance;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Passenger passenger = (Passenger) o;
-        return passengerId == passenger.passengerId && phoneNumber == passenger.phoneNumber && nationalCode == passenger.nationalCode && username.equals(passenger.username) && password.equals(passenger.password) && firstName.equals(passenger.firstName) && lastName.equals(passenger.lastName) && birthDate.equals(passenger.birthDate);
+        return phoneNumber == passenger.phoneNumber && nationalCode == passenger.nationalCode && username.equals(passenger.username) && password.equals(passenger.password) && firstName.equals(passenger.firstName) && lastName.equals(passenger.lastName) && birthDate.equals(passenger.birthDate);
     }
 
     @Override
@@ -108,6 +127,7 @@ public class Passenger {
     public String toString() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String DateStr = dateFormat.format(birthDate);
+        final String passengerState = stateOfAttendance ? "in travel" : "waiting for travel";
         return "Passenger{" +
                 "passengerId=" + passengerId +
                 ", username='" + username + '\'' +
@@ -117,6 +137,8 @@ public class Passenger {
                 ", birthDate=" + DateStr +
                 ", phoneNumber=" + phoneNumber +
                 ", nationalCode=" + nationalCode +
+                ", balance=" + balance +
+                ", stateOfAttendance=" + passengerState +
                 '}';
     }
 }

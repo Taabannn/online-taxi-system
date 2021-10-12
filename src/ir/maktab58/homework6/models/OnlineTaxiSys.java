@@ -2,8 +2,12 @@ package ir.maktab58.homework6.models;
 
 import ir.maktab58.homework6.dataaccess.DriverDataBaseAccess;
 import ir.maktab58.homework6.dataaccess.PassengerDataBaseAccess;
+import ir.maktab58.homework6.dataaccess.TravelDataBaseAccess;
 import ir.maktab58.homework6.exceptions.EmptyBufferException;
+import ir.maktab58.homework6.exceptions.InvalidSourceOrDestination;
 import ir.maktab58.homework6.exceptions.carexceptions.InvalidTypeOfVehicle;
+import ir.maktab58.homework6.models.places.Coordinates;
+import ir.maktab58.homework6.models.places.Places;
 import ir.maktab58.homework6.models.vehicles.*;
 
 import java.util.ArrayList;
@@ -14,20 +18,18 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     Admin admin = new Admin();
     ArrayList<Driver> drivers = new ArrayList<>();
     ArrayList<Passenger> passengers = new ArrayList<>();
+    ArrayList<Travel> travels = new ArrayList<>();
     PassengerDataBaseAccess passengerAccess = new PassengerDataBaseAccess();
     DriverDataBaseAccess driversAccess = new DriverDataBaseAccess();
+    TravelDataBaseAccess travelAccess = new TravelDataBaseAccess();
 
+    @Override
     public void addAGroupOfDrivers() {
-        System.out.println("Consider that only admin could add group of drivers to drivers list.");
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter your username.");
-        String username = deleteLastSpaces(scanner.nextLine());
-        System.out.println("Please enter your password.");
-        String password = deleteLastSpaces(scanner.nextLine());
         drivers = driversAccess.getAllDrivers();
-        boolean allowed = admin.isUserAdmin(username, password);
+        boolean allowed = isUserAllowed("add", "drivers");
         if (allowed) {
             System.out.println("How many drivers would you like to add?");
+            Scanner scanner = new Scanner(System.in);
             try {
                 int numOfDrivers = Integer.parseInt(deleteLastSpaces(scanner.nextLine()));
                 addEachDriver(numOfDrivers);
@@ -42,7 +44,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     private void addEachDriver(int numOfDrivers){
         for (int i = 0; i < numOfDrivers; i++){
             Driver newDriver = getNewDriver();
-            boolean existed = isDriverExisted(newDriver);
+            boolean existed = drivers.contains(newDriver);
             boolean registeredCar = isVehicleRegistered(newDriver);
             boolean userNameTaken = isUserNameTaken(newDriver);
             if (existed){
@@ -78,17 +80,9 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         return false;
     }
 
-    private boolean isDriverExisted(Driver driver){
-        for (Driver driver1 : drivers){
-            if (driver1.equals(driver))
-                return true;
-        }
-        return false;
-    }
-
     private Driver getNewDriver(){
         System.out.println("Please enter your username, password, firstName, lastName, birthDate(year, month, day)," +
-                            "phoneNumber, nationalCode, vehicle(type, model, color, plateNumber).");
+                "phoneNumber, nationalCode, vehicle(type, model, color, plateNumber, and your currentLocation [x, y]).");
         Scanner scanner = new Scanner(System.in);
         String inputLine = deleteLastSpaces(scanner.nextLine());
         String[] tokens = inputLine.split(" ");
@@ -102,8 +96,11 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         long phoneNumber = Long.parseLong(tokens[7]);
         long nationalCode = Long.parseLong(tokens[8]);
         Vehicle vehicle = getVehicle(tokens[9], tokens[10], tokens[11], tokens[12]);
+        int x = Integer.parseInt(tokens[13]);
+        int y = Integer.parseInt(tokens[14]);
         return new Driver(drivers.size() + 1, username, password, firstName, lastName,
-                birthDate, phoneNumber, nationalCode, vehicle);
+                birthDate, phoneNumber, nationalCode, vehicle, false, 0,
+                new Coordinates(x, y));
     }
 
     private void checkEmptyBuffer(String username, String password, String firstName, String lastName){
@@ -131,6 +128,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         throw new InvalidTypeOfVehicle("Type of vehicle that you've entered is not acceptable.", 400);
     }
 
+    @Override
     public void driverSignupOrLogin(){
         drivers = driversAccess.getAllDrivers();
         System.out.println("Would you like to signup or login?");
@@ -166,18 +164,37 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         System.out.println("Sorry! You've might've entered username or password wrong.");
     }
 
-    public void addAGroupOfPassengers(){
-        System.out.println("Consider that only admin could add group of drivers to drivers list.");
+    private void showDriverMenu(Driver driver){
+        boolean stateOfAttendance = driver.isStateOfAttendance();
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter your username.");
-        String username = deleteLastSpaces(scanner.nextLine());
-        System.out.println("Please enter your password.");
-        String password = deleteLastSpaces(scanner.nextLine());
-        boolean allowed = admin.isUserAdmin(username, password);
+        if(stateOfAttendance)
+            System.out.println("You're still in travel.");
+        while (!stateOfAttendance) {
+            System.out.println("**********Driver Menu**********");
+            System.out.println("1) Claim passenger payment");
+            System.out.println("2) Travel is finished");
+            System.out.println("3) Back to main menu");
+            String choice = deleteLastSpaces(scanner.nextLine());
+            if (choice.equals("1")) {
+                //tODO
+            } else if (choice.equals("2")) {
+                //TODO
+            } else if (choice.equals("3")) {
+                break;
+            } else {
+                System.out.println("Invalid input command. Your choice must be an integer between 1 to 3.");
+            }
+        }
+    }
+
+    @Override
+    public void addAGroupOfPassengers(){
+        boolean allowed = isUserAllowed("add", "passengers");
         passengers = passengerAccess.getAllPassengers();
         if (allowed) {
             try {
                 System.out.println("How many passengers would you like to add?");
+                Scanner scanner = new Scanner(System.in);
                 int numOfPassengers = Integer.parseInt(scanner.nextLine());
                 addEachPassenger(numOfPassengers);
             } catch (Exception ex) {
@@ -191,7 +208,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     private void addEachPassenger(int numOfPassengers){
         for (int i = 0; i < numOfPassengers; i++){
             Passenger newPassenger = getPassenger();
-            boolean existed = isPassengerExisted(newPassenger);
+            boolean existed = passengers.contains(newPassenger);
             boolean userNameTaken = isUserNameTaken(newPassenger);
             if (existed){
                 System.out.println("Sorry! This passenger is already existed.");
@@ -207,14 +224,6 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         }
     }
 
-    private boolean isPassengerExisted(Passenger passenger){
-        for (Passenger passenger1 : passengers)
-            if (passenger1.equals(passenger))
-                return true;
-
-        return false;
-    }
-
     private boolean isUserNameTaken(Passenger passenger){
         for (Passenger passenger1 : passengers)
             if (passenger1.getUsername().equals(passenger.getUsername()))
@@ -225,7 +234,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
 
     private Passenger getPassenger(){
         System.out.println("Please enter your username, password, firstName, lastName, " +
-                "birthDate(year, month, day), phoneNumber, nationalCode");
+                "birthDate(year, month, day), phoneNumber, nationalCode, initialBalance");
         Scanner scanner = new Scanner(System.in);
         String inputLine = deleteLastSpaces(scanner.nextLine());
         String[] tokens = inputLine.split(" ");
@@ -238,27 +247,46 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         Date birthDate = new Date(year - 1900, month - 1, day);
         long phoneNumber = Long.parseLong(tokens[7]);
         long nationalCode = Long.parseLong(tokens[8]);
+        int initialBalance = Integer.parseInt(tokens[9]);
         return new Passenger(passengers.size() + 1, username, password, firstName, lastName,
-                birthDate, phoneNumber, nationalCode);
+                birthDate, phoneNumber, nationalCode, initialBalance, false);
     }
 
+    @Override
     public void passengerSignupOrLogin(){
         passengers = passengerAccess.getAllPassengers();
         System.out.println("Would you like to signup or login?");
         Scanner scanner = new Scanner(System.in);
         String choice = deleteLastSpaces(scanner.nextLine());
-        if (choice.equalsIgnoreCase("signup")){
-            try {
-                int numOfPassengers = 1;
-                addEachPassenger(numOfPassengers);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+        try {
+            if (choice.equalsIgnoreCase("signup")) {
+                passengerSignup();
+            } else if (choice.equalsIgnoreCase("login")) {
+                passengerLogin();
+            } else {
+                System.out.println("Invalid choice! \nEnter signup if you want to create account.");
+                System.out.println("Enter login, if you've already had an account. \nPlease try again.");
             }
-        } else if (choice.equalsIgnoreCase("login")){
-            passengerLogin();;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void passengerSignup(){
+        Passenger newPassenger = getPassenger();
+        boolean existed = passengers.contains(newPassenger);
+        boolean userNameTaken = isUserNameTaken(newPassenger);
+        if (existed){
+            System.out.println("Sorry! This passenger is already existed.");
+        } else if (userNameTaken) {
+            System.out.println("Sorry! username that you've entered is already taken. Please try again.");
         } else {
-            System.out.println("Invalid choice! \nEnter signup if you want to create account.");
-            System.out.println("Enter login, if you've already had an account. \nPlease try again.");
+            boolean added = passengerAccess.savePassenger(passengers, newPassenger);
+            if (added) {
+                passengers = passengerAccess.getAllPassengers();
+                System.out.println("This passenger " + newPassenger + " is added successfully!");
+                showPassengerMenu(newPassenger);
+            }
         }
     }
 
@@ -271,20 +299,146 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         for (Passenger passenger : passengers){
             if (passenger.getUsername().equals(username) && passenger.getPassword().equals(password)){
                 System.out.println("Welcome back " + passenger.getFirstName() + " " + passenger.getLastName() + "!");
+                showPassengerMenu(passenger);
                 return;
             }
         }
         System.out.println("Sorry! You've might've entered username or password wrong.");
     }
 
-    public void showAllDriversInformation() {
-        System.out.println("Consider that only admin could see this list.");
+    private void showPassengerMenu(Passenger passenger){
+        boolean stateOfAttendance = passenger.isStateOfAttendance();
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter your username.");
-        String username = deleteLastSpaces(scanner.nextLine());
-        System.out.println("Please enter your password.");
-        String password = deleteLastSpaces(scanner.nextLine());
-        boolean Allowed = admin.isUserAdmin(username, password);
+        if(stateOfAttendance)
+            System.out.println("You're still in travel.");
+        while (!stateOfAttendance) {
+            System.out.println("**********Passenger Menu**********");
+            System.out.println("1) Apply for a new travel (pay cash)");
+            System.out.println("2) Apply for a new travel (pay from your balance)");
+            System.out.println("3) Deposit your balance");
+            System.out.println("4) Back to main menu");
+            String choice = deleteLastSpaces(scanner.nextLine());
+            if (choice.equals("1")) {
+                applyForTravelPayCash(passenger);
+            } else if (choice.equals("2")) {
+                applyForTravelPayFromYourBalance(passenger);
+            } else if (choice.equals("3")) {
+                depositPassengerWallet(passenger);
+            } else if (choice.equals("4")) {
+                break;
+            } else {
+                System.out.println("Invalid input command. Your choice must be an integer between 1 to 4.");
+            }
+        }
+    }
+
+    private void applyForTravelPayFromYourBalance(Passenger passenger){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter source: ");
+        String source = deleteLastSpaces(scanner.nextLine());
+        System.out.println("Please enter destination: ");
+        String destination = deleteLastSpaces(scanner.nextLine());
+        if (source.length() == 0 || destination.length() == 0)
+            throw new EmptyBufferException("Source or destination can't be empty buffer", 400);
+        validateSourceAndDestination(source);
+        validateSourceAndDestination(destination);
+        Travel travel = new Travel(travels.size() + 1, passenger, source, destination, false, false, true);
+        if (travel.getCost() <= passenger.getBalance()){
+            System.out.println("Your balance is enough.");
+            travel.setPaid(true);
+            passenger.setBalance(passenger.getBalance() - travel.getCost());
+            boolean isAdded = travelAccess.saveTravel(travel);
+            if (isAdded){
+                System.out.println("Cost of travel is: " + travel.getCost());
+                travels = travelAccess.getAllTravels(passengers, drivers);
+            } else {
+                System.out.println("Your request has not registered. Please try later!");
+                return;
+            }
+            passengerAccess.updatePassengerBalance(passenger.getPassengerId(), passenger.getBalance());
+            passengers = passengerAccess.getAllPassengers();
+        } else {
+            System.out.println("Your balance is not enough. You should deposit your account: " + (travel.getCost() - passenger.getBalance()));
+            while (true) {
+                System.out.println("Do you want to continue? Yes/No");
+                String choice = deleteLastSpaces(scanner.nextLine());
+                if (choice.equalsIgnoreCase("No"))
+                    return;
+                else if (choice.equalsIgnoreCase("Yes")) {
+                    System.out.println("You have not deposited your account.");
+                    System.out.println("How much money do you want to deposit?");
+                    int amountOfIncrease = Integer.parseInt(deleteLastSpaces(scanner.nextLine()));
+                    passengerAccess.updatePassengerBalance(passenger.getPassengerId(), amountOfIncrease + passenger.getBalance());
+                    passenger.setBalance(passenger.getBalance() + amountOfIncrease);
+                    if (travel.getCost() <= passenger.getBalance()) {
+                        System.out.println("Your balance is enough.");
+                        travel.setPaid(true);
+                        passenger.setBalance(passenger.getBalance() - travel.getCost());
+                        boolean isAdded = travelAccess.saveTravel(travel);
+                        if (isAdded) {
+                            System.out.println("Cost of travel is: " + travel.getCost());
+                            travels = travelAccess.getAllTravels(passengers, drivers);
+                        } else {
+                            System.out.println("Your request has not registered. Please try later!");
+                            return;
+                        }
+                        passengerAccess.updatePassengerBalance(passenger.getPassengerId(), passenger.getBalance());
+                        passengers = passengerAccess.getAllPassengers();
+                    } else {
+                        System.out.println("Your balance is not enough yet. You should deposit your account: " + (travel.getCost() - passenger.getBalance()));
+                        continue;
+                    }
+                }else {
+                    System.out.println("Invalid Input! Please try again.");
+                }
+            }
+        }
+    }
+
+    private void applyForTravelPayCash(Passenger passenger){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter source: ");
+        String source = deleteLastSpaces(scanner.nextLine());
+        System.out.println("Please enter destination: ");
+        String destination = deleteLastSpaces(scanner.nextLine());
+        if (source.length() == 0 || destination.length() == 0)
+            throw new EmptyBufferException("Source or destination can't be empty buffer", 400);
+        validateSourceAndDestination(source);
+        validateSourceAndDestination(destination);
+        Travel travel = new Travel(travels.size() + 1, passenger, source, destination, false, false, false);
+        boolean isAdded = travelAccess.saveTravel(travel);
+        if (isAdded){
+            System.out.println("Cost of travel is: " + travel.getCost());
+            travels = travelAccess.getAllTravels(passengers, drivers);
+        } else
+            System.out.println("Your request has not registered. Please try later!");
+    }
+
+    private void validateSourceAndDestination(String nameOfPlace){
+        if (!nameOfPlace.equalsIgnoreCase(Places.PLACE_A.getPlaceName()) ||
+                !nameOfPlace.equalsIgnoreCase(Places.PLACE_B.getPlaceName()) ||
+                !nameOfPlace.equalsIgnoreCase(Places.PLACE_C.getPlaceName()) ||
+                !nameOfPlace.equalsIgnoreCase(Places.PLACE_D.getPlaceName()))
+            throw new InvalidSourceOrDestination("Invalid Source Or Destination", 400);
+    }
+
+    private void depositPassengerWallet(Passenger passenger){
+        System.out.println("How much money do you want to deposit?");
+        Scanner scanner = new Scanner(System.in);
+        int amount = Integer.parseInt(deleteLastSpaces(scanner.nextLine()));
+        int result = passengerAccess.updatePassengerBalance(passenger.getPassengerId(), passenger.getBalance() + amount);
+        if (result == 1) {
+            System.out.println(passenger.getFirstName() + " Your balance is updated successfully!");
+            System.out.println("Now your balance is " + (amount + passenger.getBalance()) + ".");
+            passengers = passengerAccess.getAllPassengers();
+        } else {
+            System.out.println("Sorry! sth wrong was happened. Please try again.");
+        }
+    }
+
+    @Override
+    public void showAllDriversInformation() {
+        boolean Allowed = isUserAllowed("show", "drivers");
         if (Allowed) {
             drivers = driversAccess.getAllDrivers();
             if (drivers.size() == 0)
@@ -300,14 +454,9 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         }
     }
 
+    @Override
     public void showAllPassengersInformation() {
-        System.out.println("Consider that only admin could see this list.");
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter your username.");
-        String username = deleteLastSpaces(scanner.nextLine());
-        System.out.println("Please enter your password.");
-        String password = deleteLastSpaces(scanner.nextLine());
-        boolean Allowed = admin.isUserAdmin(username, password);
+        boolean Allowed = isUserAllowed("show", "passengers");
         if (Allowed) {
             passengers = passengerAccess.getAllPassengers();
             if (passengers.size() == 0)
@@ -321,6 +470,21 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         } else {
             System.out.println("You're not allowed to see passengers Information.");
         }
+    }
+
+    @Override
+    public void showOngoingTravels() {
+
+    }
+
+    private boolean isUserAllowed(String mode, String typeOfGroup){
+        printProperMessage(mode, typeOfGroup);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter your username.");
+        String username = deleteLastSpaces(scanner.nextLine());
+        System.out.println("Please enter your password.");
+        String password = deleteLastSpaces(scanner.nextLine());
+        return admin.isUserAdmin(username, password);
     }
 
     private String deleteLastSpaces(String inputLine) {
