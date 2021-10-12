@@ -3,6 +3,7 @@ package ir.maktab58.homework6.dataaccess;
 import ir.maktab58.homework6.exceptions.OnlineTaxiSysEx;
 import ir.maktab58.homework6.exceptions.carexceptions.InvalidTypeOfVehicle;
 import ir.maktab58.homework6.models.Driver;
+import ir.maktab58.homework6.models.places.Coordinates;
 import ir.maktab58.homework6.models.vehicles.*;
 
 import java.sql.*;
@@ -31,11 +32,12 @@ public class DriverDataBaseAccess extends DataBaseAccess{
                             resultSet.getString("first_name"), resultSet.getString("last_name"),
                             birthDate, phoneNumber, nationalCode, resultSet.getString("vehicle_type"),
                             resultSet.getString("vehicle_model"), resultSet.getString("vehicle_color"),
-                            resultSet.getString("vehicle_platenumber"));
+                            resultSet.getString("vehicle_platenumber"), resultSet.getInt("state"),
+                            resultSet.getInt("wallet"), resultSet.getString("current_location"));
                     passengersList.add(driver);
-                    }
-                    return passengersList;
-                } catch (SQLException | NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException | OnlineTaxiSysEx exception){
+                }
+                return passengersList;
+            } catch (SQLException | NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException | OnlineTaxiSysEx exception){
                 System.out.println(exception.getMessage());
             }
         }
@@ -45,7 +47,8 @@ public class DriverDataBaseAccess extends DataBaseAccess{
     private Driver getDriver(int passengerId, String username, String password,
                              String firstName, String lastName, Date birthDate,
                              long phoneNumber, long nationalCode, String vehicleType,
-                             String model, String color, String plateNumber){
+                             String model, String color, String plateNumber, int state,
+                             int wallet, String location){
 
         checkInputBuffers(username, password, firstName, lastName);
         VehicleInterface.checkInputBuffer(model, 500);
@@ -56,9 +59,16 @@ public class DriverDataBaseAccess extends DataBaseAccess{
         if (!vehicleType.equalsIgnoreCase(VehicleType.CAR.getVehicleType()))
             throw new InvalidTypeOfVehicle("This type of vehicle does not exist", 500);
         Car car = new Car(model, color, plateNumber);
-
-        return new Driver(passengerId, username, password, firstName, lastName,
-                birthDate, phoneNumber, nationalCode, car);
+        String[] locationXAndY = location.split(" ");
+        int x = Integer.parseInt(locationXAndY[0]);
+        int y = Integer.parseInt(locationXAndY[1]);
+        Coordinates currentLocation = new Coordinates(x, y);
+        if (state == 0)
+            return new Driver(passengerId, username, password, firstName, lastName,
+                    birthDate, phoneNumber, nationalCode, car, false, wallet, currentLocation);
+        else
+            return new Driver(passengerId, username, password, firstName, lastName,
+                    birthDate, phoneNumber, nationalCode, car, true, wallet, currentLocation);
     }
 
     public boolean saveDriver(ArrayList<Driver> drivers, Driver driver) {
@@ -69,7 +79,7 @@ public class DriverDataBaseAccess extends DataBaseAccess{
                 String birthDateStr = dateFormat.format(driver.getBirthDate());
                 Vehicle vehicle = driver.getVehicle();
                 String typeOfVehicle = getTypeOfVehicle(vehicle);
-                String sqlQuery = String.format("INSERT INTO drivers (driver_Id, username, password, first_name, last_name, birth_date, phone_number, national_code, vehicle_type, vehicle_model, vehicle_color, vehicle_platenumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                String sqlQuery = String.format("INSERT INTO drivers (driver_Id, username, password, first_name, last_name, birth_date, phone_number, national_code, vehicle_type, vehicle_model, vehicle_color, vehicle_platenumber, state, wallet, current_location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 PreparedStatement pstmt = connection.prepareStatement(sqlQuery);
                 setPreparedStatement(pstmt, currentDriverId, driver, birthDateStr, typeOfVehicle, vehicle);
                 boolean result = pstmt.execute();
@@ -111,5 +121,12 @@ public class DriverDataBaseAccess extends DataBaseAccess{
         pstmt.setString(10, vehicle.getModel());
         pstmt.setString(11, vehicle.getColor());
         pstmt.setString(12, vehicle.getPlateNumber());
+        if (driver.isStateOfAttendance())
+            pstmt.setInt(13, 1);
+        else
+            pstmt.setInt(13, 0);
+
+        pstmt.setInt(14, driver.getWallet());
+        pstmt.setString(15, driver.getCurrentLocation().toString());
     }
 }

@@ -1,5 +1,6 @@
 package ir.maktab58.homework6.models;
 
+import ir.maktab58.homework6.models.places.Coordinates;
 import ir.maktab58.homework6.models.vehicles.Vehicle;
 
 import java.text.DateFormat;
@@ -17,9 +18,11 @@ public class Driver {
     private long phoneNumber;
     private long nationalCode;
     private Vehicle vehicle;
+    private boolean stateOfAttendance;
+    private int wallet;
+    private Coordinates currentLocation;
 
-    public Driver(int driverId, String username, String password, String firstName, String lastName,
-                  Date birthDate, long phoneNumber, long nationalCode, Vehicle vehicle) {
+    public Driver(int driverId, String username, String password, String firstName, String lastName, Date birthDate, long phoneNumber, long nationalCode, Vehicle vehicle, boolean stateOfAttendance, int wallet, Coordinates currentLocation) {
         this.driverId = driverId;
         this.username = username;
         this.password = password;
@@ -29,6 +32,9 @@ public class Driver {
         this.phoneNumber = phoneNumber;
         this.nationalCode = nationalCode;
         this.vehicle = vehicle;
+        this.stateOfAttendance = stateOfAttendance;
+        this.wallet = wallet;
+        this.currentLocation = currentLocation;
     }
 
     public int getDriverId() {
@@ -103,6 +109,30 @@ public class Driver {
         this.vehicle = vehicle;
     }
 
+    public boolean isStateOfAttendance() {
+        return stateOfAttendance;
+    }
+
+    public void setStateOfAttendance(boolean stateOfAttendance) {
+        this.stateOfAttendance = stateOfAttendance;
+    }
+
+    public int getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(int wallet) {
+        this.wallet = wallet;
+    }
+
+    public Coordinates getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(Coordinates currentLocation) {
+        this.currentLocation = currentLocation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -120,6 +150,7 @@ public class Driver {
     public String toString() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String DateStr = dateFormat.format(birthDate);
+        final String driverState = stateOfAttendance ? "in travel" : "waiting for travel";
         return "Driver{" +
                 "driverId=" + driverId +
                 ", username='" + username + '\'' +
@@ -130,6 +161,9 @@ public class Driver {
                 ", phoneNumber=" + phoneNumber +
                 ", nationalCode=" + nationalCode +
                 ", vehicle=" + vehicle +
+                ", stateOfAttendance=" + driverState +
+                ", wallet=" + wallet +
+                ", currentLocation=" + currentLocation +
                 '}';
     }
 }
