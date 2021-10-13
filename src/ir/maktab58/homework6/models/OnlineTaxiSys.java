@@ -562,7 +562,13 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
 
     @Override
     public void showOngoingTravels() {
-
+        passengers = passengerAccess.getAllPassengers();
+        drivers = driversAccess.getAllDrivers();
+        ArrayList<Travel> ongoingTravels = travelAccess.getOngoingTravels(passengers, drivers);
+        if (ongoingTravels.size() == 0){
+            System.out.println("There is no ongoing travel to show.");
+            return;
+        }
     }
 
     private boolean isUserAllowed(String mode, String typeOfGroup){
