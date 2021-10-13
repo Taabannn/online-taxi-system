@@ -23,7 +23,7 @@ public class TravelDataBaseAccess extends DataBaseAccess {
         if (connection != null) {
             try {
                 int currentTravelId = travel.getTravelId();
-                String sqlQuery = String.format("INSERT INTO travel (travel_Id, fk_passenger_id, fk_driver_id, source, destination, cost, status, isPaid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                String sqlQuery = String.format("INSERT INTO travel (travel_Id, fk_passenger_id, fk_driver_id, source, destination, cost, status, isPaid, payment_mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 PreparedStatement pstmt = connection.prepareStatement(sqlQuery);
                 pstmt.setInt(1, currentTravelId);
                 pstmt.setInt(2, travel.getPassenger().getPassengerId());
@@ -74,7 +74,7 @@ public class TravelDataBaseAccess extends DataBaseAccess {
                     Passenger passenger = passengers.get(resultSet.getInt("fk_passenger_id") - 1);
                     Driver driver = drivers.get(resultSet.getInt("fk_driver_id") - 1);
                     Travel travel = new Travel(resultSet.getInt("travel_id"),
-                            passenger, resultSet.getString("source"), resultSet.getString("destination"),
+                            passenger, driver, resultSet.getString("source"), resultSet.getString("destination"),
                             status, isPaid, paymentMode);
                     travel.setDriver(driver);
                     travelsList.add(travel);
@@ -85,6 +85,48 @@ public class TravelDataBaseAccess extends DataBaseAccess {
             }
         }
         return null;
+    }
+
+    public int updateIsPaidState(Travel travel){
+        if (connection != null) {
+            try {
+                int isPaid;
+                if (travel.isPaid())
+                    isPaid = 1;
+                else
+                    isPaid = 0;
+                String sqlQuery = String.format("UPDATE travel SET isPaid = %d WHERE travel_id = %d",
+                        isPaid, travel.getTravelId());
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                int result = preparedStatement.executeUpdate(sqlQuery);
+                return result;
+            }
+            catch (SQLException ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        return 0;
+    }
+
+    public int updateStatusOfTravel(Travel travel){
+        if (connection != null) {
+            try {
+                int status;
+                if (travel.isStatus())
+                    status = 1;
+                else
+                    status = 0;
+                String sqlQuery = String.format("UPDATE travel SET status = %d WHERE travel_id = %d",
+                        status, travel.getTravelId());
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                int result = preparedStatement.executeUpdate(sqlQuery);
+                return result;
+            }
+            catch (SQLException ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        return 0;
     }
 }
 

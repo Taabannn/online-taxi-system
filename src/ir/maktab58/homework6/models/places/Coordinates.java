@@ -14,6 +14,12 @@ public class Coordinates {
         this.y = y;
     }
 
+    public Coordinates(String coordinateAddress){
+        String[] xAndYTokens = coordinateAddress.split(" ");
+        this.x = Integer.parseInt(xAndYTokens[0]);
+        this.y = Integer.parseInt(xAndYTokens[1]);
+    }
+
     public int getX() {
         return x;
     }

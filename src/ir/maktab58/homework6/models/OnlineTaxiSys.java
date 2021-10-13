@@ -4,10 +4,8 @@ import ir.maktab58.homework6.dataaccess.DriverDataBaseAccess;
 import ir.maktab58.homework6.dataaccess.PassengerDataBaseAccess;
 import ir.maktab58.homework6.dataaccess.TravelDataBaseAccess;
 import ir.maktab58.homework6.exceptions.EmptyBufferException;
-import ir.maktab58.homework6.exceptions.InvalidSourceOrDestination;
 import ir.maktab58.homework6.exceptions.carexceptions.InvalidTypeOfVehicle;
 import ir.maktab58.homework6.models.places.Coordinates;
-import ir.maktab58.homework6.models.places.Places;
 import ir.maktab58.homework6.models.vehicles.*;
 
 import java.util.ArrayList;
@@ -134,18 +132,38 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         System.out.println("Would you like to signup or login?");
         Scanner scanner = new Scanner(System.in);
         String choice = deleteLastSpaces(scanner.nextLine());
-        if (choice.equalsIgnoreCase("signup")){
-            try {
-                int numOfDrivers = 1;
-                addEachDriver(numOfDrivers);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+        try {
+            if (choice.equalsIgnoreCase("signup")){
+                driverSignup();
+            } else if (choice.equalsIgnoreCase("login")){
+                driverLogin();
+            } else {
+                System.out.println("Invalid choice! \nEnter signup if you want to create account.");
+                System.out.println("Enter login, if you've already had an account. \nPlease try again.");
             }
-        } else if (choice.equalsIgnoreCase("login")){
-            driverLogin();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void driverSignup(){
+        Driver newDriver = getNewDriver();
+        boolean existed = drivers.contains(newDriver);
+        boolean registeredCar = isVehicleRegistered(newDriver);
+        boolean userNameTaken = isUserNameTaken(newDriver);
+        if (existed){
+            System.out.println("Sorry! This driver is already existed.");
+        } else if (registeredCar) {
+            System.out.println("Sorry! This car is already registered by another driver.");
+        } else if (userNameTaken) {
+            System.out.println("Sorry! username that you've entered is already taken. Please try again.");
         } else {
-            System.out.println("Invalid choice! \nEnter signup if you want to create account.");
-            System.out.println("Enter login, if you've already had an account. \nPlease try again.");
+            boolean added = driversAccess.saveDriver(drivers, newDriver);
+            if (added) {
+                drivers = driversAccess.getAllDrivers();
+                System.out.println("This driver " + newDriver + " is added successfully!");
+                showDriverMenu(newDriver);
+            }
         }
     }
 
@@ -158,6 +176,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         for (Driver driver : drivers){
             if (driver.getUsername().equals(username) && driver.getPassword().equals(password)){
                 System.out.println("Welcome back " + driver.getFirstName() + " " + driver.getLastName() + "!");
+                showDriverMenu(driver);
                 return;
             }
         }
@@ -167,22 +186,86 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     private void showDriverMenu(Driver driver){
         boolean stateOfAttendance = driver.isStateOfAttendance();
         Scanner scanner = new Scanner(System.in);
-        if(stateOfAttendance)
-            System.out.println("You're still in travel.");
-        while (!stateOfAttendance) {
+        if(!stateOfAttendance)
+            System.out.println("You're still waiting for travel.");
+        while (stateOfAttendance) {
             System.out.println("**********Driver Menu**********");
-            System.out.println("1) Claim passenger payment");
+            System.out.println("1) Confirm passenger payment");
             System.out.println("2) Travel is finished");
             System.out.println("3) Back to main menu");
             String choice = deleteLastSpaces(scanner.nextLine());
             if (choice.equals("1")) {
-                //tODO
+                confirmPassengerPayment(driver);
             } else if (choice.equals("2")) {
-                //TODO
+                confirmTravelIsFinished(driver);
             } else if (choice.equals("3")) {
                 break;
             } else {
                 System.out.println("Invalid input command. Your choice must be an integer between 1 to 3.");
+            }
+        }
+    }
+
+    private void confirmTravelIsFinished(Driver driver){
+        passengers = passengerAccess.getAllPassengers();
+        drivers = driversAccess.getAllDrivers();
+        travels = travelAccess.getAllTravels(passengers, drivers);
+        for (Travel travel : travels) {
+            if (travel.getDriver().equals(driver) && !travel.isStatus()){
+                if (travel.isPaid()) {
+                    changeDriverAndPassengerStatus(travel, travel.getDriver());
+                }
+                System.out.println("Sorry. You didn't receive payments, so you can't finish travel.");
+            }
+        }
+    }
+
+    private void changeDriverAndPassengerStatus(Travel travel, Driver driver){
+        System.out.println("Are you sure to finish travel?.");
+        Scanner scanner = new Scanner(System.in);
+        if (deleteLastSpaces(scanner.nextLine()).equalsIgnoreCase("Yes")) {
+            travel.setStatus(true);
+            int result = travelAccess.updateStatusOfTravel(travel);
+            if (result == 1){
+                driver.setStateOfAttendance(false);
+                driversAccess.updateDriverStateOfAttendance(driver);
+                driver.setCurrentLocation(new Coordinates(travel.getDestination()));
+                driversAccess.updateDriverCurrentLocation(driver);
+                travel.getPassenger().setStateOfAttendance(false);
+                passengerAccess.updatePassengerStateOfAttendance(travel.getPassenger());
+                System.out.println("Your travel is finished successfully.");
+            } else
+                System.out.println("Sorry! unable to process. Please try again.");
+        }
+    }
+
+    private void confirmPassengerPayment(Driver driver){
+        passengers = passengerAccess.getAllPassengers();
+        drivers = driversAccess.getAllDrivers();
+        travels = travelAccess.getAllTravels(passengers, drivers);
+        for (Travel travel : travels) {
+            if (travel.getDriver().equals(driver)){
+                if (!travel.isPaymentMode()) {
+                    if (travel.isPaid()) {
+                        System.out.println("You already confirmed that travel is paid.");
+                        return;
+                    }
+                    changeTravelPayment(travel);
+                }
+            }
+        }
+    }
+
+    private void changeTravelPayment(Travel travel){
+        System.out.println("Are sure to make isPaid state?");
+        Scanner scanner = new Scanner(System.in);
+        if (deleteLastSpaces(scanner.nextLine()).equalsIgnoreCase("Yes")) {
+            travel.setPaid(true);
+            int result = travelAccess.updateIsPaidState(travel);
+            if (result == 1){
+                System.out.println("Your request was handled successfully.");
+            } else {
+                System.out.println("Sorry! Unable to response your request, please try again.");
             }
         }
     }
@@ -333,6 +416,9 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     }
 
     private void applyForTravelPayFromYourBalance(Passenger passenger){
+        passengers = passengerAccess.getAllPassengers();
+        drivers = driversAccess.getAllDrivers();
+        travels = travelAccess.getAllTravels(passengers, drivers);
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter source: ");
         String source = deleteLastSpaces(scanner.nextLine());
@@ -340,9 +426,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         String destination = deleteLastSpaces(scanner.nextLine());
         if (source.length() == 0 || destination.length() == 0)
             throw new EmptyBufferException("Source or destination can't be empty buffer", 400);
-        validateSourceAndDestination(source);
-        validateSourceAndDestination(destination);
-        Travel travel = new Travel(travels.size() + 1, passenger, source, destination, false, false, true);
+        Travel travel = new Travel(travels.size() + 1, passenger, drivers, source, destination, false, false, true);
         if (travel.getCost() <= passenger.getBalance()){
             System.out.println("Your balance is enough.");
             travel.setPaid(true);
@@ -357,6 +441,11 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
             }
             passengerAccess.updatePassengerBalance(passenger.getPassengerId(), passenger.getBalance());
             passengers = passengerAccess.getAllPassengers();
+            travel.getDriver().setWallet(travel.getDriver().getWallet() + travel.getCost());
+            driversAccess.updateDriverWallet(travel.getDriver());
+            travel.getDriver().setStateOfAttendance(true);
+            driversAccess.updateDriverStateOfAttendance(travel.getDriver());
+            //drivers = driversAccess.getAllDrivers();
         } else {
             System.out.println("Your balance is not enough. You should deposit your account: " + (travel.getCost() - passenger.getBalance()));
             while (true) {
@@ -384,6 +473,12 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
                         }
                         passengerAccess.updatePassengerBalance(passenger.getPassengerId(), passenger.getBalance());
                         passengers = passengerAccess.getAllPassengers();
+                        travel.getDriver().setWallet(travel.getDriver().getWallet() + travel.getCost());
+                        driversAccess.updateDriverWallet(travel.getDriver());
+                        travel.getDriver().setStateOfAttendance(true);
+                        driversAccess.updateDriverStateOfAttendance(travel.getDriver());
+                        //drivers = driversAccess.getAllDrivers();
+                        break;
                     } else {
                         System.out.println("Your balance is not enough yet. You should deposit your account: " + (travel.getCost() - passenger.getBalance()));
                         continue;
@@ -396,6 +491,9 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     }
 
     private void applyForTravelPayCash(Passenger passenger){
+        passengers = passengerAccess.getAllPassengers();
+        drivers = driversAccess.getAllDrivers();
+        travels = travelAccess.getAllTravels(passengers, drivers);
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter source: ");
         String source = deleteLastSpaces(scanner.nextLine());
@@ -403,23 +501,13 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         String destination = deleteLastSpaces(scanner.nextLine());
         if (source.length() == 0 || destination.length() == 0)
             throw new EmptyBufferException("Source or destination can't be empty buffer", 400);
-        validateSourceAndDestination(source);
-        validateSourceAndDestination(destination);
-        Travel travel = new Travel(travels.size() + 1, passenger, source, destination, false, false, false);
+        Travel travel = new Travel(travels.size() + 1, passenger, drivers, source, destination, false, false, false);
         boolean isAdded = travelAccess.saveTravel(travel);
         if (isAdded){
             System.out.println("Cost of travel is: " + travel.getCost());
             travels = travelAccess.getAllTravels(passengers, drivers);
         } else
             System.out.println("Your request has not registered. Please try later!");
-    }
-
-    private void validateSourceAndDestination(String nameOfPlace){
-        if (!nameOfPlace.equalsIgnoreCase(Places.PLACE_A.getPlaceName()) ||
-                !nameOfPlace.equalsIgnoreCase(Places.PLACE_B.getPlaceName()) ||
-                !nameOfPlace.equalsIgnoreCase(Places.PLACE_C.getPlaceName()) ||
-                !nameOfPlace.equalsIgnoreCase(Places.PLACE_D.getPlaceName()))
-            throw new InvalidSourceOrDestination("Invalid Source Or Destination", 400);
     }
 
     private void depositPassengerWallet(Passenger passenger){

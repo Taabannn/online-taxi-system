@@ -11,7 +11,7 @@ import java.text.*;
 import java.util.*;
 import java.util.Date;
 
-public class DriverDataBaseAccess extends DataBaseAccess{
+public class DriverDataBaseAccess extends DataBaseAccess {
     public DriverDataBaseAccess() {
         super();
     }
@@ -37,7 +37,7 @@ public class DriverDataBaseAccess extends DataBaseAccess{
                     passengersList.add(driver);
                 }
                 return passengersList;
-            } catch (SQLException | NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException | OnlineTaxiSysEx exception){
+            } catch (SQLException | NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException | OnlineTaxiSysEx exception) {
                 System.out.println(exception.getMessage());
             }
         }
@@ -48,7 +48,7 @@ public class DriverDataBaseAccess extends DataBaseAccess{
                              String firstName, String lastName, Date birthDate,
                              long phoneNumber, long nationalCode, String vehicleType,
                              String model, String color, String plateNumber, int state,
-                             int wallet, String location){
+                             int wallet, String location) {
 
         checkInputBuffers(username, password, firstName, lastName);
         VehicleInterface.checkInputBuffer(model, 500);
@@ -84,14 +84,14 @@ public class DriverDataBaseAccess extends DataBaseAccess{
                 setPreparedStatement(pstmt, currentDriverId, driver, birthDateStr, typeOfVehicle, vehicle);
                 boolean result = pstmt.execute();
                 return !result;
-            } catch (SQLException | InvalidTypeOfVehicle exception){
+            } catch (SQLException | InvalidTypeOfVehicle exception) {
                 exception.getMessage();
             }
         }
         return false;
     }
 
-    private String getTypeOfVehicle(Vehicle vehicle){
+    private String getTypeOfVehicle(Vehicle vehicle) {
         if (vehicle instanceof Car)
             return VehicleType.CAR.getVehicleType();
 
@@ -128,5 +128,58 @@ public class DriverDataBaseAccess extends DataBaseAccess{
 
         pstmt.setInt(14, driver.getWallet());
         pstmt.setString(15, driver.getCurrentLocation().toString());
+    }
+
+    public int updateDriverWallet(Driver driver) {
+        if (connection != null) {
+            try {
+                String sqlQuery = String.format("UPDATE drivers SET wallet = %d WHERE driver_id = %d",
+                        driver.getWallet(), driver.getDriverId());
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                int result = preparedStatement.executeUpdate(sqlQuery);
+                return result;
+            }
+            catch (SQLException ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        return 0;
+    }
+
+    public int updateDriverStateOfAttendance(Driver driver) {
+        if (connection != null) {
+            try {
+                int state;
+                if (driver.isStateOfAttendance())
+                    state = 1;
+                else
+                    state = 0;
+                String sqlQuery = String.format("UPDATE drivers SET state = %d WHERE driver_id = %d",
+                        state, driver.getDriverId());
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                int result = preparedStatement.executeUpdate(sqlQuery);
+                return result;
+            }
+            catch (SQLException ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        return 0;
+    }
+
+    public int updateDriverCurrentLocation(Driver driver){
+        if (connection != null) {
+            try {
+                String sqlQuery = String.format("UPDATE drivers SET current_location = '%s' WHERE driver_id = %d",
+                        driver.getCurrentLocation().toString(), driver.getDriverId());
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                int result = preparedStatement.executeUpdate(sqlQuery);
+                return result;
+            }
+            catch (SQLException ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        return 0;
     }
 }

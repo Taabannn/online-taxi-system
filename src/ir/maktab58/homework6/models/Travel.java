@@ -1,29 +1,43 @@
 package ir.maktab58.homework6.models;
 
+import ir.maktab58.homework6.exceptions.InvalidSourceOrDestination;
 import ir.maktab58.homework6.models.places.Coordinates;
-import ir.maktab58.homework6.models.places.Places;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
  * @author Taban Soleymani
  */
 public class Travel {
-    int travelId;
-    Passenger passenger;
-    Driver driver;
-    String source; //[x, y]
-    String destination; //[x, y]
-    boolean status; //0: unfinished, //1: finished
-    boolean isPaid;
-    int cost;
-    boolean paymentMode; //0: in cash, 1: withdraw passenger account
+    private int travelId;
+    private Passenger passenger;
+    private Driver driver;
+    private String source; //[x, y]
+    private String destination; //[x, y]
+    private boolean status; //0: unfinished, //1: finished
+    private boolean isPaid;
+    private int cost;
+    private boolean paymentMode; //0: in cash, 1: withdraw passenger account
 
-    public Travel(int travelId, Passenger passenger, String source, String destination, boolean status, boolean isPaid, boolean paymentMode) {
+    public Travel(int travelId, Passenger passenger, Driver driver, String source, String destination, boolean status, boolean isPaid, boolean paymentMode) {
+        this.travelId = travelId;
+        this.passenger = passenger;
+        this.driver = driver;
+        this.source = source;
+        this.destination = destination;
+        this.status = status;
+        this.isPaid = isPaid;
+        this.cost = cost;
+        this.paymentMode = paymentMode;
+    }
+
+    public Travel(int travelId, Passenger passenger, ArrayList<Driver> drivers, String source, String destination, boolean status, boolean isPaid, boolean paymentMode) {
         this.travelId = travelId;
         this.passenger = passenger;
         this.source = source;
         this.destination = destination;
+        this.driver = findTheDriver(drivers);
         this.status = status;
         this.isPaid = isPaid;
         this.paymentMode = paymentMode;
@@ -111,16 +125,31 @@ public class Travel {
         cost = distance*1000;
     }
 
-    public Coordinates calcCoordinate(String nameOfPlace){
-        if (nameOfPlace.equalsIgnoreCase(Places.PLACE_A.getPlaceName()))
-            return new Coordinates(3, 4);
-        if (nameOfPlace.equalsIgnoreCase(Places.PLACE_B.getPlaceName()))
-            return new Coordinates(6, 8);
-        if (nameOfPlace.equalsIgnoreCase(Places.PLACE_C.getPlaceName()))
-            return new Coordinates(9, 12);
-        if (nameOfPlace.equalsIgnoreCase(Places.PLACE_D.getPlaceName()))
-            return new Coordinates(12, 16);
-        return null;
+    public Coordinates calcCoordinate(String addressOfPlace){
+        if (addressOfPlace.length() == 3)
+            throw new  InvalidSourceOrDestination("Format of source or destination is wrong.", 400);
+        return new Coordinates(addressOfPlace);
+    }
+
+    public Driver findTheDriver(ArrayList<Driver> drivers){
+        Coordinates sourceCoordinate = calcCoordinate(source);
+        Driver firstDriver= drivers.get(0);
+        int driverIndex = 0;
+        Coordinates driverLocation = firstDriver.getCurrentLocation();
+        int x = sourceCoordinate.getX() - driverLocation.getX();
+        int y = sourceCoordinate.getY() - driverLocation.getY();
+        int minDistance = (int) Math.sqrt(x*x + y*y);
+        for (Driver driver1 : drivers) {
+            driverLocation = driver1.getCurrentLocation();
+            x = sourceCoordinate.getX() - driverLocation.getX();
+            y = sourceCoordinate.getY() - driverLocation.getY();
+            int distance = (int) Math.sqrt(x*x + y*y);
+            if (distance < minDistance) {
+                minDistance = distance;
+                driverIndex = drivers.indexOf(driver1);
+            }
+        }
+        return drivers.get(driverIndex);
     }
 
     @Override
