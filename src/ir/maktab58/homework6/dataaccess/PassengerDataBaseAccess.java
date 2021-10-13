@@ -1,6 +1,7 @@
 package ir.maktab58.homework6.dataaccess;
 
 import ir.maktab58.homework6.exceptions.EmptyBufferException;
+import ir.maktab58.homework6.models.Driver;
 import ir.maktab58.homework6.models.Passenger;
 
 import java.sql.PreparedStatement;
@@ -90,6 +91,27 @@ public class PassengerDataBaseAccess extends DataBaseAccess {
             try {
                 String sqlQuery = String.format("UPDATE passengers SET balance = %d WHERE passenger_id = %d",
                         amount, passengerId);
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                int result = preparedStatement.executeUpdate(sqlQuery);
+                return result;
+            }
+            catch (SQLException ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        return 0;
+    }
+
+    public int updatePassengerStateOfAttendance(Passenger passenger) {
+        if (connection != null) {
+            try {
+                int state;
+                if (passenger.isStateOfAttendance())
+                    state = 1;
+                else
+                    state = 0;
+                String sqlQuery = String.format("UPDATE passengers SET state_of_attendance = %d WHERE driver_id = %d",
+                        state, passenger.getPassengerId());
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
                 int result = preparedStatement.executeUpdate(sqlQuery);
                 return result;
