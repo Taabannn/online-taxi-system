@@ -613,7 +613,6 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
 
     @Override
     public void showOngoingTravels() {
-<<<<<<< HEAD
         boolean allowed = isUserAllowed("show", "ongoing travels");
         if (allowed) {
             passengers = passengerAccess.getAllPassengers();
@@ -628,15 +627,6 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
             }
         } else
             System.out.println("You are not allowed to see ongoing travels list.");
-=======
-        passengers = passengerAccess.getAllPassengers();
-        drivers = driversAccess.getAllDrivers();
-        ArrayList<Travel> ongoingTravels = travelAccess.getOngoingTravels(passengers, drivers);
-        if (ongoingTravels.size() == 0){
-            System.out.println("There is no ongoing travel to show.");
-            return;
-        }
->>>>>>> 4e4b2c742c8d91a83f85f4316c73068fc3360a9e
     }
 
     private boolean isUserAllowed(String mode, String typeOfGroup){
