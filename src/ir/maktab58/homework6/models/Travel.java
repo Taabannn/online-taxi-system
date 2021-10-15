@@ -19,6 +19,7 @@ public class Travel {
     private boolean isPaid;
     private int cost;
     private boolean paymentMode; //0: in cash, 1: withdraw passenger account
+    private ArrayList<Integer> rejectedDrivers = new ArrayList<>();
 
     public Travel(int travelId, Passenger passenger, Driver driver, String source, String destination, boolean status, boolean isPaid, boolean paymentMode) {
         this.travelId = travelId;
@@ -126,7 +127,7 @@ public class Travel {
     }
 
     public Coordinates calcCoordinate(String addressOfPlace){
-        if (addressOfPlace.length() == 3)
+        if (addressOfPlace.length() < 3)
             throw new  InvalidSourceOrDestination("Format of source or destination is wrong.", 400);
         return new Coordinates(addressOfPlace);
     }
@@ -150,6 +151,42 @@ public class Travel {
             }
         }
         return drivers.get(driverIndex);
+    }
+
+    private int findTheFirstIndex(){
+        int firstIndex = 0;
+        for (Integer rejectedDriver : rejectedDrivers) {
+            if (rejectedDriver == firstIndex)
+                firstIndex++;
+        }
+
+        return firstIndex;
+    }
+
+    public void assignNewDriver(int index, ArrayList<Driver> drivers) {
+        rejectedDrivers.add(index);
+        Coordinates sourceCoordinate = calcCoordinate(source);
+        int driverIndex = findTheFirstIndex();
+        Driver firstDriver = drivers.get(driverIndex);
+        Coordinates driverLocation = firstDriver.getCurrentLocation();
+        int x = sourceCoordinate.getX() - driverLocation.getX();
+        int y = sourceCoordinate.getY() - driverLocation.getY();
+        int minDistance = (int) Math.sqrt(x*x + y*y);
+        for (Driver driver1 : drivers) {
+            for (Integer index1 : rejectedDrivers) {
+                if (drivers.indexOf(driver1) != index1){
+                    driverLocation = driver1.getCurrentLocation();
+                    x = sourceCoordinate.getX() - driverLocation.getX();
+                    y = sourceCoordinate.getY() - driverLocation.getY();
+                    int distance = (int) Math.sqrt(x * x + y * y);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        driverIndex = drivers.indexOf(driver1);
+                    }
+                }
+            }
+        }
+        this.driver = drivers.get(driverIndex);
     }
 
     @Override

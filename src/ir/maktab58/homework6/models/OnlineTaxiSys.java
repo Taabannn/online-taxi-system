@@ -184,11 +184,17 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     }
 
     private void showDriverMenu(Driver driver){
+        passengers = passengerAccess.getAllPassengers();
+        drivers = driversAccess.getAllDrivers();
+        travels = travelAccess.getAllTravels(passengers, drivers);
         boolean stateOfAttendance = driver.isStateOfAttendance();
         Scanner scanner = new Scanner(System.in);
         if(!stateOfAttendance)
             System.out.println("You're still waiting for travel.");
-        while (stateOfAttendance) {
+        boolean confirmed = calcPassengerStateOfAttendance(driver);
+        if (!confirmed)
+            confirmed = confirmOrCancelTravel(driver);
+        while (stateOfAttendance && confirmed) {
             System.out.println("**********Driver Menu**********");
             System.out.println("1) Confirm passenger payment");
             System.out.println("2) Travel is finished");
@@ -206,6 +212,53 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         }
     }
 
+    private boolean confirmOrCancelTravel(Driver driver){
+        System.out.println("First of all you must confirmed assigned travel.");
+        System.out.println("Do you want to cancel or confirm travel?");
+        Scanner scanner = new Scanner(System.in);
+        String choice = scanner.nextLine().trim();
+        if (choice.equalsIgnoreCase("confirm")){
+            for (Travel travel : travels) {
+                if (travel.getDriver().equals(driver) && !travel.isStatus()){
+                    travel.getPassenger().setStateOfAttendance(true);
+                    passengerAccess.updatePassengerStateOfAttendance(travel.getPassenger());
+                }
+            }
+            return true;
+        } else if(choice.equalsIgnoreCase("cancel")) {
+            for (Travel travel : travels) {
+                if (travel.getDriver().equals(driver) && !travel.isStatus()){
+                    driver.setStateOfAttendance(false);
+                    driversAccess.updateDriverStateOfAttendance(driver);
+                    if (travel.isPaymentMode() && travel.isPaid()){
+                        driver.setWallet(driver.getWallet() - travel.getCost());
+                        driversAccess.updateDriverWallet(driver);
+                    }
+                    travel.assignNewDriver(drivers.indexOf(driver), drivers);
+                    travelAccess.updateDriver(travel);
+                    driversAccess.updateDriverStateOfAttendance(travel.getDriver());
+                    if (travel.isPaymentMode() && travel.isPaid()){
+                        driver.setWallet(travel.getDriver().getWallet() + travel.getCost());
+                        driversAccess.updateDriverWallet(travel.getDriver());
+                    }
+                }
+            }
+            return false;
+        } else {
+            System.out.println("Invalid Input, please try later.");
+            return false;
+        }
+    }
+
+    private boolean calcPassengerStateOfAttendance (Driver driver){
+        for (Travel travel : travels) {
+            if (travel.getDriver().equals(driver) && !travel.isStatus()) {
+                return travel.getPassenger().isStateOfAttendance();
+            }
+        }
+        return false;
+    }
+
     private void confirmTravelIsFinished(Driver driver){
         passengers = passengerAccess.getAllPassengers();
         drivers = driversAccess.getAllDrivers();
@@ -214,6 +267,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
             if (travel.getDriver().equals(driver) && !travel.isStatus()){
                 if (travel.isPaid()) {
                     changeDriverAndPassengerStatus(travel, travel.getDriver());
+                    return;
                 }
                 System.out.println("Sorry. You didn't receive payments, so you can't finish travel.");
             }
@@ -221,7 +275,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     }
 
     private void changeDriverAndPassengerStatus(Travel travel, Driver driver){
-        System.out.println("Are you sure to finish travel?.");
+        System.out.println("Are you sure to finish travel?");
         Scanner scanner = new Scanner(System.in);
         if (deleteLastSpaces(scanner.nextLine()).equalsIgnoreCase("Yes")) {
             travel.setStatus(true);
@@ -416,17 +470,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
     }
 
     private void applyForTravelPayFromYourBalance(Passenger passenger){
-        passengers = passengerAccess.getAllPassengers();
-        drivers = driversAccess.getAllDrivers();
-        travels = travelAccess.getAllTravels(passengers, drivers);
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter source: ");
-        String source = deleteLastSpaces(scanner.nextLine());
-        System.out.println("Please enter destination: ");
-        String destination = deleteLastSpaces(scanner.nextLine());
-        if (source.length() == 0 || destination.length() == 0)
-            throw new EmptyBufferException("Source or destination can't be empty buffer", 400);
-        Travel travel = new Travel(travels.size() + 1, passenger, drivers, source, destination, false, false, true);
+        Travel travel = getSourceAndDestination(passenger, true);
         if (travel.getCost() <= passenger.getBalance()){
             System.out.println("Your balance is enough.");
             travel.setPaid(true);
@@ -439,58 +483,71 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
                 System.out.println("Your request has not registered. Please try later!");
                 return;
             }
-            passengerAccess.updatePassengerBalance(passenger.getPassengerId(), passenger.getBalance());
-            passengers = passengerAccess.getAllPassengers();
-            travel.getDriver().setWallet(travel.getDriver().getWallet() + travel.getCost());
-            driversAccess.updateDriverWallet(travel.getDriver());
-            travel.getDriver().setStateOfAttendance(true);
-            driversAccess.updateDriverStateOfAttendance(travel.getDriver());
-            //drivers = driversAccess.getAllDrivers();
+            updateAndInsertNewTravel(passenger, travel);
         } else {
-            System.out.println("Your balance is not enough. You should deposit your account: " + (travel.getCost() - passenger.getBalance()));
-            while (true) {
-                System.out.println("Do you want to continue? Yes/No");
-                String choice = deleteLastSpaces(scanner.nextLine());
-                if (choice.equalsIgnoreCase("No"))
-                    return;
-                else if (choice.equalsIgnoreCase("Yes")) {
-                    System.out.println("You have not deposited your account.");
-                    System.out.println("How much money do you want to deposit?");
-                    int amountOfIncrease = Integer.parseInt(deleteLastSpaces(scanner.nextLine()));
-                    passengerAccess.updatePassengerBalance(passenger.getPassengerId(), amountOfIncrease + passenger.getBalance());
-                    passenger.setBalance(passenger.getBalance() + amountOfIncrease);
-                    if (travel.getCost() <= passenger.getBalance()) {
-                        System.out.println("Your balance is enough.");
-                        travel.setPaid(true);
-                        passenger.setBalance(passenger.getBalance() - travel.getCost());
-                        boolean isAdded = travelAccess.saveTravel(travel);
-                        if (isAdded) {
-                            System.out.println("Cost of travel is: " + travel.getCost());
-                            travels = travelAccess.getAllTravels(passengers, drivers);
-                        } else {
-                            System.out.println("Your request has not registered. Please try later!");
-                            return;
-                        }
-                        passengerAccess.updatePassengerBalance(passenger.getPassengerId(), passenger.getBalance());
-                        passengers = passengerAccess.getAllPassengers();
-                        travel.getDriver().setWallet(travel.getDriver().getWallet() + travel.getCost());
-                        driversAccess.updateDriverWallet(travel.getDriver());
-                        travel.getDriver().setStateOfAttendance(true);
-                        driversAccess.updateDriverStateOfAttendance(travel.getDriver());
-                        //drivers = driversAccess.getAllDrivers();
-                        break;
+            depositYourBalanceForATravel(travel, passenger);
+        }
+    }
+
+    private void depositYourBalanceForATravel(Travel travel, Passenger passenger){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Your balance is not enough. You should deposit your account: " + (travel.getCost() - passenger.getBalance()));
+        while (true) {
+            System.out.println("Do you want to continue? Yes/No");
+            String choice = deleteLastSpaces(scanner.nextLine());
+            if (choice.equalsIgnoreCase("No"))
+                return;
+            else if (choice.equalsIgnoreCase("Yes")) {
+                System.out.println("You have not deposited your account.");
+                System.out.println("How much money do you want to deposit?");
+                int amountOfIncrease = Integer.parseInt(deleteLastSpaces(scanner.nextLine()));
+                passengerAccess.updatePassengerBalance(passenger.getPassengerId(), amountOfIncrease + passenger.getBalance());
+                passenger.setBalance(passenger.getBalance() + amountOfIncrease);
+                if (travel.getCost() <= passenger.getBalance()) {
+                    System.out.println("Your balance is enough.");
+                    travel.setPaid(true);
+                    passenger.setBalance(passenger.getBalance() - travel.getCost());
+                    boolean isAdded = travelAccess.saveTravel(travel);
+                    if (isAdded) {
+                        System.out.println("Your travel is registered successfully. Please wait for a driver.");
+                        travels = travelAccess.getAllTravels(passengers, drivers);
                     } else {
-                        System.out.println("Your balance is not enough yet. You should deposit your account: " + (travel.getCost() - passenger.getBalance()));
-                        continue;
+                        System.out.println("Your request has not registered. Please try later!");
+                        return;
                     }
-                }else {
-                    System.out.println("Invalid Input! Please try again.");
+                    updateAndInsertNewTravel(passenger, travel);
+                    break;
+                } else {
+                    System.out.println("Your balance is not enough yet. You should deposit your account: " + (travel.getCost() - passenger.getBalance()));
+                    continue;
                 }
+            }else {
+                System.out.println("Invalid Input! Please try again.");
             }
         }
     }
 
+    private void updateAndInsertNewTravel(Passenger passenger, Travel travel){
+        passengerAccess.updatePassengerBalance(passenger.getPassengerId(), passenger.getBalance());
+        passengers = passengerAccess.getAllPassengers();
+        travel.getDriver().setWallet(travel.getDriver().getWallet() + travel.getCost());
+        driversAccess.updateDriverWallet(travel.getDriver());
+        travel.getDriver().setStateOfAttendance(true);
+        driversAccess.updateDriverStateOfAttendance(travel.getDriver());
+        //drivers = driversAccess.getAllDrivers();
+    }
+
     private void applyForTravelPayCash(Passenger passenger){
+        Travel travel = getSourceAndDestination(passenger, false);
+        boolean isAdded = travelAccess.saveTravel(travel);
+        if (isAdded){
+            System.out.println("Cost of travel is: " + travel.getCost());
+            travels = travelAccess.getAllTravels(passengers, drivers);
+        } else
+            System.out.println("Your request has not registered. Please try later!");
+    }
+
+    private Travel getSourceAndDestination(Passenger passenger, boolean paymentMode){
         passengers = passengerAccess.getAllPassengers();
         drivers = driversAccess.getAllDrivers();
         travels = travelAccess.getAllTravels(passengers, drivers);
@@ -501,13 +558,7 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
         String destination = deleteLastSpaces(scanner.nextLine());
         if (source.length() == 0 || destination.length() == 0)
             throw new EmptyBufferException("Source or destination can't be empty buffer", 400);
-        Travel travel = new Travel(travels.size() + 1, passenger, drivers, source, destination, false, false, false);
-        boolean isAdded = travelAccess.saveTravel(travel);
-        if (isAdded){
-            System.out.println("Cost of travel is: " + travel.getCost());
-            travels = travelAccess.getAllTravels(passengers, drivers);
-        } else
-            System.out.println("Your request has not registered. Please try later!");
+        return new Travel(travels.size() + 1, passenger, drivers, source, destination, false, false, paymentMode);
     }
 
     private void depositPassengerWallet(Passenger passenger){
@@ -562,7 +613,20 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
 
     @Override
     public void showOngoingTravels() {
-
+        boolean allowed = isUserAllowed("show", "ongoing travels");
+        if (allowed) {
+            passengers = passengerAccess.getAllPassengers();
+            drivers = driversAccess.getAllDrivers();
+            ArrayList<Travel> ongoingTravels = travelAccess.getOngoingTravels(passengers, drivers);
+            if (ongoingTravels.size() == 0) {
+                System.out.println("There is no ongoing travel to show.");
+                return;
+            }
+            for (Travel ongoingTravel : ongoingTravels) {
+                System.out.println(ongoingTravel);
+            }
+        } else
+            System.out.println("You are not allowed to see ongoing travels list.");
     }
 
     private boolean isUserAllowed(String mode, String typeOfGroup){

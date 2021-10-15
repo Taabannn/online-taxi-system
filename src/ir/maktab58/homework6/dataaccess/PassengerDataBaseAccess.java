@@ -62,7 +62,7 @@ public class PassengerDataBaseAccess extends DataBaseAccess {
                 int currentPassengerId = passengers.size() + 1;
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String birthDateStr = dateFormat.format(passenger.getBirthDate());
-                String sqlQuery = String.format("INSERT INTO passengers (passenger_Id, username, password, first_name, last_name, birth_date, phone_number, national_code, balance, state_of_attendance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                String sqlQuery = String.format("INSERT INTO passengers (passenger_id, username, password, first_name, last_name, birth_date, phone_number, national_code, balance, state_of_attendance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 PreparedStatement pstmt = connection.prepareStatement(sqlQuery);
                 pstmt.setInt(1, currentPassengerId);
                 pstmt.setString(2, passenger.getUsername());
@@ -110,7 +110,7 @@ public class PassengerDataBaseAccess extends DataBaseAccess {
                     state = 1;
                 else
                     state = 0;
-                String sqlQuery = String.format("UPDATE passengers SET state_of_attendance = %d WHERE driver_id = %d",
+                String sqlQuery = String.format("UPDATE passengers SET state_of_attendance = %d WHERE passenger_id = %d",
                         state, passenger.getPassengerId());
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
                 int result = preparedStatement.executeUpdate(sqlQuery);

@@ -128,5 +128,52 @@ public class TravelDataBaseAccess extends DataBaseAccess {
         }
         return 0;
     }
+
+    public int updateDriver(Travel travel){
+        if (connection != null) {
+            try {
+                String sqlQuery = String.format("UPDATE travel SET fk_driver_id = %d WHERE travel_id = %d",
+                        travel.getDriver().getDriverId(), travel.getTravelId());
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                int result = preparedStatement.executeUpdate(sqlQuery);
+                return result;
+            }
+            catch (SQLException ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        return 0;
+    }
+
+    public ArrayList<Travel> getOngoingTravels(ArrayList<Passenger> passengers, ArrayList<Driver> drivers){
+        if (connection != null) {
+            try {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM travel WHERE status = 0");
+                ArrayList<Travel> travelsList = new ArrayList<>();
+                while (resultSet.next()) {
+                    boolean isPaid = true;
+                    int temp = resultSet.getInt("isPaid");
+                    if (temp == 0)
+                        isPaid = false;
+                    boolean paymentMode = true;
+                    temp = resultSet.getInt("payment_mode");
+                    if (temp == 0)
+                        paymentMode = false;
+                    Passenger passenger = passengers.get(resultSet.getInt("fk_passenger_id") - 1);
+                    Driver driver = drivers.get(resultSet.getInt("fk_driver_id") - 1);
+                    Travel travel = new Travel(resultSet.getInt("travel_id"),
+                            passenger, driver, resultSet.getString("source"), resultSet.getString("destination"),
+                            false, isPaid, paymentMode);
+                    travel.setDriver(driver);
+                    travelsList.add(travel);
+                }
+                return travelsList;
+            } catch (SQLException | NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException | EmptyBufferException exception) {
+                System.out.println(exception.getMessage());
+            }
+        }
+        return null;
+    }
 }
 
