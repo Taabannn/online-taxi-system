@@ -15,10 +15,10 @@ public class Main {
             System.out.println("3) Driver signup or login");
             System.out.println("4) Passenger signup or login");
             System.out.println("5) Show Ongoing Travels");
-            System.out.println("6) show a list of drivers");
-            System.out.println("7) show a list of passengers");
-            System.out.println("8) exit");
-            String choice = inputLine.nextLine();
+            System.out.println("6) Show a list of drivers");
+            System.out.println("7) Show a list of passengers");
+            System.out.println("8) Exit");
+            String choice = inputLine.nextLine().trim();
             if (choice.equals("1")) {
                 onlineTaxiSys.addAGroupOfDrivers();
             } else if (choice.equals("2")) {
