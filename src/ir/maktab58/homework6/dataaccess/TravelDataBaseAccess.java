@@ -128,7 +128,6 @@ public class TravelDataBaseAccess extends DataBaseAccess {
         }
         return 0;
     }
-<<<<<<< HEAD
 
     public int updateDriver(Travel travel){
         if (connection != null) {
@@ -146,9 +145,6 @@ public class TravelDataBaseAccess extends DataBaseAccess {
         return 0;
     }
 
-=======
-    
->>>>>>> 4e4b2c742c8d91a83f85f4316c73068fc3360a9e
     public ArrayList<Travel> getOngoingTravels(ArrayList<Passenger> passengers, ArrayList<Driver> drivers){
         if (connection != null) {
             try {
