@@ -1,18 +1,23 @@
-package ir.maktab58.homework6.models;
+package ir.maktab58.homework6.service;
 
 import ir.maktab58.homework6.dataaccess.DriverDataBaseAccess;
 import ir.maktab58.homework6.dataaccess.PassengerDataBaseAccess;
 import ir.maktab58.homework6.dataaccess.TravelDataBaseAccess;
 import ir.maktab58.homework6.exceptions.EmptyBufferException;
 import ir.maktab58.homework6.exceptions.carexceptions.InvalidTypeOfVehicle;
+import ir.maktab58.homework6.models.Admin;
+import ir.maktab58.homework6.models.Driver;
+import ir.maktab58.homework6.models.Passenger;
+import ir.maktab58.homework6.models.Travel;
 import ir.maktab58.homework6.models.places.Coordinates;
 import ir.maktab58.homework6.models.vehicles.*;
+import ir.maktab58.homework6.service.OnlineTaxiInterface;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
-public class OnlineTaxiSys implements OnlineTaxiInterface {
+public class OnlineTaxiService implements OnlineTaxiInterface {
     Admin admin = new Admin();
     ArrayList<Driver> drivers = new ArrayList<>();
     ArrayList<Passenger> passengers = new ArrayList<>();
@@ -627,6 +632,13 @@ public class OnlineTaxiSys implements OnlineTaxiInterface {
             }
         } else
             System.out.println("You are not allowed to see ongoing travels list.");
+        passengers = passengerAccess.getAllPassengers();
+        drivers = driversAccess.getAllDrivers();
+        ArrayList<Travel> ongoingTravels = travelAccess.getOngoingTravels(passengers, drivers);
+        if (ongoingTravels.size() == 0){
+            System.out.println("There is no ongoing travel to show.");
+            return;
+        }
     }
 
     private boolean isUserAllowed(String mode, String typeOfGroup){

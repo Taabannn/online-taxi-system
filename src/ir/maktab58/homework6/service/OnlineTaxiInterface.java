@@ -1,4 +1,4 @@
-package ir.maktab58.homework6.models;
+package ir.maktab58.homework6.service;
 
 public interface OnlineTaxiInterface {
     void addAGroupOfDrivers();

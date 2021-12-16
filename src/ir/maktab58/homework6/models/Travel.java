@@ -29,7 +29,6 @@ public class Travel {
         this.destination = destination;
         this.status = status;
         this.isPaid = isPaid;
-        this.cost = cost;
         this.paymentMode = paymentMode;
     }
 
