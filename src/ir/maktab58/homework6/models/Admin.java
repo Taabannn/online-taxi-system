@@ -1,10 +1,18 @@
 package ir.maktab58.homework6.models;
 
 public class Admin {
-    private final String username = "root";
-    private final String password = "61378";
+    private static final Admin admin = new Admin();
+
+    private Admin() {
+    }
+
+    public static Admin getInstance() {
+        return admin;
+    }
 
     public boolean isUserAdmin(String enteredUsername, String enteredPassword){
+        String username = "root";
+        String password = "61378";
         return enteredUsername.equals(username) && enteredPassword.equals(password);
     }
 }

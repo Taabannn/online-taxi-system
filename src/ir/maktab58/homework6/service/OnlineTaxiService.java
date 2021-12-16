@@ -3,22 +3,14 @@ package ir.maktab58.homework6.service;
 import ir.maktab58.homework6.dataaccess.DriverDataBaseAccess;
 import ir.maktab58.homework6.dataaccess.PassengerDataBaseAccess;
 import ir.maktab58.homework6.dataaccess.TravelDataBaseAccess;
-import ir.maktab58.homework6.exceptions.EmptyBufferException;
 import ir.maktab58.homework6.exceptions.carexceptions.InvalidTypeOfVehicle;
-import ir.maktab58.homework6.models.Admin;
 import ir.maktab58.homework6.models.Driver;
 import ir.maktab58.homework6.models.Passenger;
 import ir.maktab58.homework6.models.Travel;
-import ir.maktab58.homework6.models.places.Coordinates;
-import ir.maktab58.homework6.models.vehicles.*;
-import ir.maktab58.homework6.service.OnlineTaxiInterface;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
 
 public class OnlineTaxiService implements OnlineTaxiInterface {
-    Admin admin = new Admin();
     ArrayList<Driver> drivers = new ArrayList<>();
     ArrayList<Passenger> passengers = new ArrayList<>();
     ArrayList<Travel> travels = new ArrayList<>();
@@ -26,7 +18,7 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
     DriverDataBaseAccess driversAccess = new DriverDataBaseAccess();
     TravelDataBaseAccess travelAccess = new TravelDataBaseAccess();
 
-    @Override
+    /*@Override
     public void addAGroupOfDrivers() {
         drivers = driversAccess.getAllDrivers();
         boolean allowed = isUserAllowed("add", "drivers");
@@ -667,5 +659,5 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
 
         inputLine = inputLine.substring(0, inputLine.length() - 2);
         return deleteLastSpaces(inputLine);
-    }
+    }*/
 }

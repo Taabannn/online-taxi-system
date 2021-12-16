@@ -1,23 +1,37 @@
 package ir.maktab58.homework6.models;
 
+import ir.maktab58.homework6.enumeration.StateOfAttendance;
+import lombok.*;
+
+import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+@Entity
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Passenger {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int passengerId;
     private String username;
     private String password;
     private String firstName;
     private String lastName;
+    @Temporal(TemporalType.DATE)
     private Date birthDate;
-    private long phoneNumber;
-    private long nationalCode;
-    private int balance;
-    private boolean stateOfAttendance;
+    private String phoneNumber;
+    private String nationalCode;
+    private long balance;
+    @Enumerated(EnumType.STRING)
+    private StateOfAttendance stateOfAttendance = StateOfAttendance.WAITING_FOR_TRAVEL;
 
-    public Passenger(int passengerId, String username, String password, String firstName, String lastName, Date birthDate, long phoneNumber, long nationalCode, int balance, boolean stateOfAttendance) {
+    @Builder(setterPrefix = "with")
+    public Passenger(int passengerId, String username, String password, String firstName, String lastName, Date birthDate, String phoneNumber, String nationalCode, long balance, StateOfAttendance stateOfAttendance) {
         this.passengerId = passengerId;
         this.username = username;
         this.password = password;
@@ -28,117 +42,5 @@ public class Passenger {
         this.nationalCode = nationalCode;
         this.balance = balance;
         this.stateOfAttendance = stateOfAttendance;
-    }
-
-    public int getPassengerId() {
-        return passengerId;
-    }
-
-    public void setPassengerId(int passengerId) {
-        this.passengerId = passengerId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public long getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(long phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public long getNationalCode() {
-        return nationalCode;
-    }
-
-    public void setNationalCode(long nationalCode) {
-        this.nationalCode = nationalCode;
-    }
-
-    public int getBalance() {
-        return balance;
-    }
-
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
-
-    public boolean isStateOfAttendance() {
-        return stateOfAttendance;
-    }
-
-    public void setStateOfAttendance(boolean stateOfAttendance) {
-        this.stateOfAttendance = stateOfAttendance;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Passenger passenger = (Passenger) o;
-        return phoneNumber == passenger.phoneNumber && nationalCode == passenger.nationalCode && username.equals(passenger.username) && password.equals(passenger.password) && firstName.equals(passenger.firstName) && lastName.equals(passenger.lastName) && birthDate.equals(passenger.birthDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(passengerId, username, password, firstName, lastName, birthDate, phoneNumber, nationalCode);
-    }
-
-    @Override
-    public String toString() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String DateStr = dateFormat.format(birthDate);
-        final String passengerState = stateOfAttendance ? "in travel" : "waiting for travel";
-        return "Passenger{" +
-                "passengerId=" + passengerId +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", birthDate=" + DateStr +
-                ", phoneNumber=" + phoneNumber +
-                ", nationalCode=" + nationalCode +
-                ", balance=" + balance +
-                ", stateOfAttendance=" + passengerState +
-                '}';
     }
 }
