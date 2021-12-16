@@ -1,8 +1,8 @@
-package ir.maktab58.homework6.view;
+package ir.maktab58.onlinetaxisys.view;
 
-import ir.maktab58.homework6.exceptions.OnlineTaxiSysEx;
-import ir.maktab58.homework6.models.Admin;
-import ir.maktab58.homework6.service.OnlineTaxiService;
+import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
+import ir.maktab58.onlinetaxisys.models.Admin;
+import ir.maktab58.onlinetaxisys.service.OnlineTaxiService;
 
 import java.util.Scanner;
 

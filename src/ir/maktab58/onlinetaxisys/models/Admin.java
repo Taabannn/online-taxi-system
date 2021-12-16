@@ -1,4 +1,4 @@
-package ir.maktab58.homework6.models;
+package ir.maktab58.onlinetaxisys.models;
 
 public class Admin {
     private static final Admin admin = new Admin();

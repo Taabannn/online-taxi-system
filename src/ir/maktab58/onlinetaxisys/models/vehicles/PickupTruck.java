@@ -1,5 +1,6 @@
-package ir.maktab58.homework6.models.vehicles;
+package ir.maktab58.onlinetaxisys.models.vehicles;
 
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.DiscriminatorValue;
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue("pickup-truck")
 @NoArgsConstructor
 public class PickupTruck extends Vehicle {
+    @Builder(setterPrefix = "with")
     public PickupTruck(String model, String color, String plateNumber) {
         super(model, color, plateNumber);
     }

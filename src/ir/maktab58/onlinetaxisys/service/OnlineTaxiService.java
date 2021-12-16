@@ -1,12 +1,8 @@
-package ir.maktab58.homework6.service;
+package ir.maktab58.onlinetaxisys.service;
 
-import ir.maktab58.homework6.dataaccess.DriverDataBaseAccess;
-import ir.maktab58.homework6.dataaccess.PassengerDataBaseAccess;
-import ir.maktab58.homework6.dataaccess.TravelDataBaseAccess;
-import ir.maktab58.homework6.exceptions.carexceptions.InvalidTypeOfVehicle;
-import ir.maktab58.homework6.models.Driver;
-import ir.maktab58.homework6.models.Passenger;
-import ir.maktab58.homework6.models.Travel;
+import ir.maktab58.onlinetaxisys.models.Driver;
+import ir.maktab58.onlinetaxisys.models.Passenger;
+import ir.maktab58.onlinetaxisys.models.Travel;
 
 import java.util.ArrayList;
 
@@ -14,9 +10,6 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
     ArrayList<Driver> drivers = new ArrayList<>();
     ArrayList<Passenger> passengers = new ArrayList<>();
     ArrayList<Travel> travels = new ArrayList<>();
-    PassengerDataBaseAccess passengerAccess = new PassengerDataBaseAccess();
-    DriverDataBaseAccess driversAccess = new DriverDataBaseAccess();
-    TravelDataBaseAccess travelAccess = new TravelDataBaseAccess();
 
     /*@Override
     public void addAGroupOfDrivers() {
@@ -631,33 +624,5 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
             System.out.println("There is no ongoing travel to show.");
             return;
         }
-    }
-
-    private boolean isUserAllowed(String mode, String typeOfGroup){
-        printProperMessage(mode, typeOfGroup);
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter your username.");
-        String username = deleteLastSpaces(scanner.nextLine());
-        System.out.println("Please enter your password.");
-        String password = deleteLastSpaces(scanner.nextLine());
-        return admin.isUserAdmin(username, password);
-    }
-
-    private String deleteLastSpaces(String inputLine) {
-        if (inputLine.length() == 0) {
-            System.out.println("Input buffer is empty.");
-            return inputLine;
-        }
-
-        if (inputLine.charAt(inputLine.length() - 1) != ' ')
-            return inputLine;
-
-        if (inputLine.equals(" ")) {
-            System.out.println("Input buffer is just a space char.");
-            return inputLine;
-        }
-
-        inputLine = inputLine.substring(0, inputLine.length() - 2);
-        return deleteLastSpaces(inputLine);
     }*/
 }

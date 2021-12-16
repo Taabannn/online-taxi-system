@@ -1,4 +1,4 @@
-package ir.maktab58.homework6.enumeration;
+package ir.maktab58.onlinetaxisys.enumeration;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

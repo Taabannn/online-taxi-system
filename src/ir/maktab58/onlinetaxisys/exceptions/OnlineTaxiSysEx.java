@@ -1,4 +1,4 @@
-package ir.maktab58.homework6.exceptions;
+package ir.maktab58.onlinetaxisys.exceptions;
 
 import lombok.Builder;
 import lombok.Getter;

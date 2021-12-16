@@ -1,15 +1,14 @@
-package ir.maktab58.homework6.models;
+package ir.maktab58.onlinetaxisys.models;
 
-import ir.maktab58.homework6.enumeration.PaymentMode;
-import ir.maktab58.homework6.enumeration.TravelStatus;
-import ir.maktab58.homework6.models.places.Coordinates;
+import ir.maktab58.onlinetaxisys.enumeration.PaymentMode;
+import ir.maktab58.onlinetaxisys.enumeration.TravelStatus;
+import ir.maktab58.onlinetaxisys.models.places.Coordinates;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 
 /**
  * @author Taban Soleymani

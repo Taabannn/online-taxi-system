@@ -1,4 +1,4 @@
-package ir.maktab58.homework6.models.vehicles;
+package ir.maktab58.onlinetaxisys.models.vehicles;
 
 import lombok.*;
 

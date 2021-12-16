@@ -1,8 +1,4 @@
-package ir.maktab58.homework6.view;
-
-import ir.maktab58.homework6.service.OnlineTaxiService;
-
-import java.util.Scanner;
+package ir.maktab58.onlinetaxisys.view;
 
 public class Main {
     public static void main(String[] args) {
