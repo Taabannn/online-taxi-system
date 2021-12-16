@@ -15,4 +15,16 @@ public class DriverService {
     public List<Driver> getAllDrivers() {
         return driverDao.getAllDrivers();
     }
+
+    public int saveNewDriver(Driver driver) {
+        return driverDao.save(driver);
+    }
+
+    public List<Driver> getDriverByUsername(String username) {
+        return driverDao.findDriverByUsername(username);
+    }
+
+    public List<Driver> getDriverByNationalCode(String nationalCode) {
+        return driverDao.findDriverByNationalCode(nationalCode);
+    }
 }

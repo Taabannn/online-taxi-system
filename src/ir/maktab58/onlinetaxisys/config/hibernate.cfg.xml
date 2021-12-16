@@ -18,11 +18,11 @@
         <property name="format_sql">true</property>
 
         <mapping class="ir.maktab58.onlinetaxisys.models.places.Coordinates"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehicles.Car"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehicles.MotorCycle"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehicles.PickupTruck"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehicles.Van"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehicles.Vehicle"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.Car"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.MotorCycle"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.PickupTruck"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.Van"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.Vehicle"/>
         <mapping class="ir.maktab58.onlinetaxisys.models.Driver"/>
         <mapping class="ir.maktab58.onlinetaxisys.models.Passenger"/>
         <mapping class="ir.maktab58.onlinetaxisys.models.Travel"/>

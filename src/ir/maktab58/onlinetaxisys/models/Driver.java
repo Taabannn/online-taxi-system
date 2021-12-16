@@ -2,7 +2,7 @@ package ir.maktab58.onlinetaxisys.models;
 
 import ir.maktab58.onlinetaxisys.enumeration.StateOfAttendance;
 import ir.maktab58.onlinetaxisys.models.places.Coordinates;
-import ir.maktab58.onlinetaxisys.models.vehicles.Vehicle;
+import ir.maktab58.onlinetaxisys.models.vehiclesfactory.Vehicle;
 import lombok.*;
 
 import javax.persistence.*;

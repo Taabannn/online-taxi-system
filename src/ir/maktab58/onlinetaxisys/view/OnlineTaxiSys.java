@@ -109,7 +109,7 @@ public class OnlineTaxiSys {
     }
 
     private int addANewDriver() {
-        System.out.println("Please enter name, family, username, password, national-code, initial balance, vehicle-type, plate-number, model, color.");
+        System.out.println("Please enter name, family, username, password, national-code, vehicle-type, plate-number, model, color and current location.");
         String inputLine = scanner.nextLine().trim();
         return onlineTaxiService.addNewDriver(inputLine);
     }

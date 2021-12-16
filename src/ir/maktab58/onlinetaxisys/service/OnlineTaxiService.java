@@ -4,6 +4,9 @@ import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
 import ir.maktab58.onlinetaxisys.models.Driver;
 import ir.maktab58.onlinetaxisys.models.Passenger;
 import ir.maktab58.onlinetaxisys.models.Travel;
+import ir.maktab58.onlinetaxisys.models.places.Coordinates;
+import ir.maktab58.onlinetaxisys.models.vehiclesfactory.Vehicle;
+import ir.maktab58.onlinetaxisys.models.vehiclesfactory.VehicleFactory;
 import ir.maktab58.onlinetaxisys.service.singletonvalidator.NationalCodeValidator;
 import ir.maktab58.onlinetaxisys.service.singletonvalidator.UserAndPassValidator;
 
@@ -72,57 +75,47 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
     }
 
     public int addNewDriver(String inputLine) {
-        return 0;
+        String[] tokens = inputLine.split(" ");
+        String name = tokens[0];
+        String family = tokens[1];
+        String username = tokens[2];
+        String password = tokens[3];
+        String nationalCode = tokens[4];
+        String vehicleType = tokens[5];
+        String plateNumber = tokens[6];
+        String model = tokens[7];
+        String color = tokens[8];
+        int x = Integer.parseInt(tokens[9]);
+        int y = Integer.parseInt(tokens[10]);
+        Coordinates currentLocation = new Coordinates(x, y);
+        validateUserPassNationalCode(username, password, nationalCode);
+        checkDriverExisted(username, nationalCode);
+        Vehicle vehicle = VehicleFactory.getVehicleType(vehicleType, plateNumber, model, color);
+        Driver driver = Driver.builder()
+                .withFirstName(name)
+                .withLastName(family)
+                .withUsername(username)
+                .withPassword(password)
+                .withNationalCode(nationalCode)
+                .withVehicle(vehicle)
+                .withCurrentLocation(currentLocation).build();
+        return driverService.saveNewDriver(driver);
     }
 
-    /*@Override
-    public void addAGroupOfDrivers() {
-        drivers = driversAccess.getAllDrivers();
-        boolean allowed = isUserAllowed("add", "drivers");
-        if (allowed) {
-            System.out.println("How many drivers would you like to add?");
-            Scanner scanner = new Scanner(System.in);
-            try {
-                int numOfDrivers = Integer.parseInt(deleteLastSpaces(scanner.nextLine()));
-                addEachDriver(numOfDrivers);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-        } else {
-            System.out.println("You're not allowed to add drivers.");
-        }
+    private void checkDriverExisted(String username, String nationalCode) {
+        List<Driver> driverByUsername = driverService.getDriverByUsername(username);
+        List<Driver> driverList = driverService.getDriverByNationalCode(nationalCode);
+        if (driverByUsername.size() != 0)
+            throw OnlineTaxiSysEx.builder()
+                    .message("Username is already taken")
+                    .errorCode(400).build();
+        if (driverList.size() != 0)
+            throw OnlineTaxiSysEx.builder()
+                    .message("This national code is existed")
+                    .errorCode(400).build();
     }
 
-    private void addEachDriver(int numOfDrivers){
-        for (int i = 0; i < numOfDrivers; i++){
-            Driver newDriver = getNewDriver();
-            boolean existed = drivers.contains(newDriver);
-            boolean registeredCar = isVehicleRegistered(newDriver);
-            boolean userNameTaken = isUserNameTaken(newDriver);
-            if (existed){
-                System.out.println("Sorry! This driver is already existed.");
-            } else if (registeredCar) {
-                System.out.println("Sorry! This car is already registered by another driver.");
-            } else if (userNameTaken) {
-                System.out.println("Sorry! username that you've entered is already taken. Please try again.");
-            } else {
-                boolean added = driversAccess.saveDriver(drivers, newDriver);
-                if (added) {
-                    drivers = driversAccess.getAllDrivers();
-                    System.out.println("This driver " + newDriver + " is added successfully!");
-                }
-            }
-        }
-    }
-
-    private boolean isUserNameTaken(Driver driver){
-        for (Driver driver1 : drivers)
-            if (driver1.getUsername().equals(driver.getUsername()))
-                return true;
-
-        return false;
-    }
-
+    /*
     private boolean isVehicleRegistered(Driver newDriver){
         for (Driver driver : drivers){
             if (driver.getVehicle().equals(newDriver.getVehicle())){
@@ -130,54 +123,6 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
             }
         }
         return false;
-    }
-
-    private Driver getNewDriver(){
-        System.out.println("Please enter your username, password, firstName, lastName, birthDate(year, month, day)," +
-                "phoneNumber, nationalCode, vehicle(type, model, color, plateNumber, and your currentLocation [x, y]).");
-        Scanner scanner = new Scanner(System.in);
-        String inputLine = deleteLastSpaces(scanner.nextLine());
-        String[] tokens = inputLine.split(" ");
-        String username = tokens[0]; String password = tokens[1];
-        String firstName = tokens[2]; String lastName = tokens[3];
-        checkEmptyBuffer(username, password, firstName, lastName);
-        int year = Integer.parseInt(tokens[4]);
-        int month = Integer.parseInt(tokens[5]);
-        int day = Integer.parseInt(tokens[6]);
-        Date birthDate = new Date(year - 1900, month - 1, day);
-        long phoneNumber = Long.parseLong(tokens[7]);
-        long nationalCode = Long.parseLong(tokens[8]);
-        Vehicle vehicle = getVehicle(tokens[9], tokens[10], tokens[11], tokens[12]);
-        int x = Integer.parseInt(tokens[13]);
-        int y = Integer.parseInt(tokens[14]);
-        return new Driver(drivers.size() + 1, username, password, firstName, lastName,
-                birthDate, phoneNumber, nationalCode, vehicle, false, 0,
-                new Coordinates(x, y));
-    }
-
-    private void checkEmptyBuffer(String username, String password, String firstName, String lastName){
-        if (username.length() == 0)
-            throw new EmptyBufferException("username can't be a zero-length string", 400);
-
-        if (password.length() == 0)
-            throw new EmptyBufferException("password can't be a zero-length string", 400);
-
-        if (firstName.length() == 0)
-            throw new EmptyBufferException("firstname can't be a zero-length string", 400);
-
-        if (lastName.length() == 0)
-            throw new EmptyBufferException("lastname can't be a zero-length string", 400);
-    }
-
-    private Vehicle getVehicle(String vehicleType, String model, String color, String plateNumber){
-        if (vehicleType.equalsIgnoreCase(VehicleType.CAR.getVehicleType())) {
-            VehicleInterface.validatePlateNumber(plateNumber, 400);
-            VehicleInterface.checkInputBuffer(model, 400);
-            VehicleInterface.checkInputBuffer(color, 400);
-            return new Car(model, color, plateNumber);
-        }
-        //TODO for other types Of vehicle
-        throw new InvalidTypeOfVehicle("Type of vehicle that you've entered is not acceptable.", 400);
     }
 
     @Override
