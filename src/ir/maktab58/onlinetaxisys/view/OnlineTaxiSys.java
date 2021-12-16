@@ -77,10 +77,66 @@ public class OnlineTaxiSys {
     }
 
     private void passengerSignupOrLogin() {
+        System.out.println("Would you like to signup or login?");
+        Scanner scanner = new Scanner(System.in);
+        String choice = scanner.nextLine().trim();
+        try {
+            if (choice.equalsIgnoreCase("signup")) {
+                passengerSignup();
+            } else if (choice.equalsIgnoreCase("login")) {
+                passengerLogin();
+            } else {
+                throw OnlineTaxiSysEx.builder()
+                        .message("Your choice must login or signup")
+                        .errorCode(400).build();
+            }
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void passengerLogin() {
+
+    }
+
+    private void passengerSignup() {
+        int passengerId = addANewPassenger();
+        showPassengerMenu(passengerId);
+    }
+
+    private void showPassengerMenu(int passengerId) {
 
     }
 
     private void driverSignupOrLogin() {
+        System.out.println("Would you like to signup or login?");
+        Scanner scanner = new Scanner(System.in);
+        String choice = scanner.nextLine().trim();
+        try {
+            if (choice.equalsIgnoreCase("signup")) {
+                driverSignup();
+            } else if (choice.equalsIgnoreCase("login")) {
+                driverLogin();
+            } else {
+                throw OnlineTaxiSysEx.builder()
+                        .message("Your choice must login or signup")
+                        .errorCode(400).build();
+            }
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void driverLogin() {
+
+    }
+
+    private void driverSignup() {
+        int driverId = addANewDriver();
+        showDriverMenu(driverId);
+    }
+
+    private void showDriverMenu(int driverId) {
 
     }
 

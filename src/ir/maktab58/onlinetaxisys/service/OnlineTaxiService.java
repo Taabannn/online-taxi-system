@@ -125,26 +125,6 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
         return false;
     }
 
-    @Override
-    public void driverSignupOrLogin(){
-        drivers = driversAccess.getAllDrivers();
-        System.out.println("Would you like to signup or login?");
-        Scanner scanner = new Scanner(System.in);
-        String choice = deleteLastSpaces(scanner.nextLine());
-        try {
-            if (choice.equalsIgnoreCase("signup")){
-                driverSignup();
-            } else if (choice.equalsIgnoreCase("login")){
-                driverLogin();
-            } else {
-                System.out.println("Invalid choice! \nEnter signup if you want to create account.");
-                System.out.println("Enter login, if you've already had an account. \nPlease try again.");
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-
     private void driverSignup(){
         Driver newDriver = getNewDriver();
         boolean existed = drivers.contains(newDriver);
