@@ -1,8 +1,11 @@
 package ir.maktab58.onlinetaxisys.service;
 
+import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
 import ir.maktab58.onlinetaxisys.models.Driver;
 import ir.maktab58.onlinetaxisys.models.Passenger;
 import ir.maktab58.onlinetaxisys.models.Travel;
+import ir.maktab58.onlinetaxisys.service.singletonvalidator.NationalCodeValidator;
+import ir.maktab58.onlinetaxisys.service.singletonvalidator.UserAndPassValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +23,56 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
 
     public List<Driver> getAllDrivers() {
         return driverService.getAllDrivers();
+    }
+
+    public int addNewPassenger(String inputLine) {
+        String[] tokens = inputLine.split(" ");
+        String name = tokens[0];
+        String family = tokens[1];
+        String username = tokens[2];
+        String password = tokens[3];
+        String nationalCode = tokens[4];
+        long initialBalance = Long.parseLong(tokens[5]);
+        validateUserPassNationalCode(username, password, nationalCode);
+        checkPassengerExisted(username, nationalCode);
+        Passenger passenger = Passenger.builder()
+                .withFirstName(name)
+                .withLastName(family)
+                .withUsername(username)
+                .withPassword(password)
+                .withNationalCode(nationalCode)
+                .withBalance(initialBalance).build();
+        return passengerService.saveNewPassenger(passenger);
+    }
+
+    private void checkPassengerExisted(String username, String nationalCode) {
+        List<Passenger> passengerByUsername = passengerService.getPassengerByUsername(username);
+        List<Passenger> passengerList = passengerService.getPassengerByNationalCode(nationalCode);
+        if (passengerByUsername.size() != 0)
+            throw OnlineTaxiSysEx.builder()
+                    .message("Username is already taken")
+                    .errorCode(400).build();
+        if (passengerList.size() != 0)
+            throw OnlineTaxiSysEx.builder()
+                    .message("This national code is existed")
+                    .errorCode(400).build();
+    }
+
+    public void validateUserPassNationalCode(String username, String password, String nationalCode) {
+        boolean userAndPassValid = UserAndPassValidator.getInstance().isUserAndPassValid(username, password);
+        if (!userAndPassValid)
+            throw OnlineTaxiSysEx.builder()
+                    .message("Invalid user or pass")
+                    .errorCode(400).build();
+        boolean nationalCodeValid = NationalCodeValidator.getInstance().isNationalCodeValid(nationalCode);
+        if (!nationalCodeValid)
+            throw OnlineTaxiSysEx.builder()
+                    .message("Invalid national code")
+                    .errorCode(400).build();
+    }
+
+    public int addNewDriver(String inputLine) {
+        return 0;
     }
 
     /*@Override

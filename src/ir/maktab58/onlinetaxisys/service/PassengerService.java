@@ -15,4 +15,16 @@ public class PassengerService {
     public List<Passenger> getAllPassengers() {
         return passengerDao.getAllPassengers();
     }
+
+    public List<Passenger> getPassengerByNationalCode(String nationalCode) {
+        return passengerDao.findPassengerByNationalCode(nationalCode);
+    }
+
+    public List<Passenger> getPassengerByUsername(String username) {
+        return passengerDao.findPassengerByUsername(username);
+    }
+
+    public int saveNewPassenger(Passenger passenger) {
+        return passengerDao.save(passenger);
+    }
 }

@@ -16,11 +16,34 @@ public class PassengerDao extends BaseDaoInterfaceImpl<Passenger> {
         List<Passenger> passengerList;
         Session session = SessionUtil.getSession();
         Transaction transaction = session.beginTransaction();
-        Query<Passenger> passengerQuery = session.createQuery("from Passenger", Passenger.class);
+        Query<Passenger> passengerQuery = session.createQuery("from Passenger ", Passenger.class);
         passengerList = passengerQuery.getResultList();
         transaction.commit();
         session.close();
         return passengerList;
     }
 
+    public List<Passenger> findPassengerByNationalCode(String nationalCode) {
+        List<Passenger> passengerList;
+        Session session = SessionUtil.getSession();
+        Transaction transaction = session.beginTransaction();
+        Query<Passenger> passengerQuery = session.createQuery("from Passenger p where p.nationalCode=:nationalCode", Passenger.class);
+        passengerQuery.setParameter("nationalCode", nationalCode);
+        passengerList = passengerQuery.getResultList();
+        transaction.commit();
+        session.close();
+        return passengerList;
+    }
+
+    public List<Passenger> findPassengerByUsername(String username) {
+        List<Passenger> passengerList;
+        Session session = SessionUtil.getSession();
+        Transaction transaction = session.beginTransaction();
+        Query<Passenger> passengerQuery = session.createQuery("from Passenger p where p.username=:username", Passenger.class);
+        passengerQuery.setParameter("username", username);
+        passengerList = passengerQuery.getResultList();
+        transaction.commit();
+        session.close();
+        return passengerList;
+    }
 }

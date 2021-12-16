@@ -89,7 +89,7 @@ public class OnlineTaxiSys {
         System.out.println("How many Passengers would you like to add?");
         int numOfPassengers = Integer.parseInt(scanner.nextLine().trim());
         for (int i = 0; i < numOfPassengers; i++) {
-
+            addANewPassenger();
         }
     }
 
@@ -98,16 +98,20 @@ public class OnlineTaxiSys {
         System.out.println("How many Drivers would you like to add?");
         int numOfDivers = Integer.parseInt(scanner.nextLine().trim());
         for (int i = 0; i < numOfDivers; i++) {
-
+            addANewDriver();
         }
     }
 
-    private void addANewPassenger() {
-
+    private int addANewPassenger() {
+        System.out.println("Please enter name, family, username, password, national-code, initial balance.");
+        String inputLine = scanner.nextLine().trim();
+        return onlineTaxiService.addNewPassenger(inputLine);
     }
 
-    private void addNewDriver() {
-
+    private int addANewDriver() {
+        System.out.println("Please enter name, family, username, password, national-code, initial balance, vehicle-type, plate-number, model, color.");
+        String inputLine = scanner.nextLine().trim();
+        return onlineTaxiService.addNewDriver(inputLine);
     }
 
     private void isUserAllowed() {
