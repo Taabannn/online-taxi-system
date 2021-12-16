@@ -17,7 +17,7 @@ public class SessionUtil {
 
     private SessionUtil() {
         Configuration configuration = new Configuration();
-        configuration.configure("ir/maktab58/config/hibernate.cfg.xml");
+        configuration.configure("ir/maktab58/onlinetaxisys/config/hibernate.cfg.xml");
         sessionFactory = configuration.buildSessionFactory();
     }
 

@@ -5,11 +5,22 @@ import ir.maktab58.onlinetaxisys.models.Passenger;
 import ir.maktab58.onlinetaxisys.models.Travel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OnlineTaxiService implements OnlineTaxiInterface {
+    private final PassengerService passengerService = new PassengerService();
+    private final DriverService driverService = new DriverService();
     ArrayList<Driver> drivers = new ArrayList<>();
     ArrayList<Passenger> passengers = new ArrayList<>();
     ArrayList<Travel> travels = new ArrayList<>();
+
+    public List<Passenger> getAllPassengers() {
+        return passengerService.getAllPassengers();
+    }
+
+    public List<Driver> getAllDrivers() {
+        return driverService.getAllDrivers();
+    }
 
     /*@Override
     public void addAGroupOfDrivers() {
@@ -562,42 +573,6 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
             passengers = passengerAccess.getAllPassengers();
         } else {
             System.out.println("Sorry! sth wrong was happened. Please try again.");
-        }
-    }
-
-    @Override
-    public void showAllDriversInformation() {
-        boolean Allowed = isUserAllowed("show", "drivers");
-        if (Allowed) {
-            drivers = driversAccess.getAllDrivers();
-            if (drivers.size() == 0)
-                System.out.println("There is no driver to show you.");
-            else {
-                System.out.println("Drivers List: ");
-                for (Driver driver : drivers) {
-                    System.out.println(driver);
-                }
-            }
-        } else {
-            System.out.println("You're not allowed to see drivers Information.");
-        }
-    }
-
-    @Override
-    public void showAllPassengersInformation() {
-        boolean Allowed = isUserAllowed("show", "passengers");
-        if (Allowed) {
-            passengers = passengerAccess.getAllPassengers();
-            if (passengers.size() == 0)
-                System.out.println("There is no passenger to show you.");
-            else {
-                System.out.println("Passengers List: ");
-                for (Passenger passenger : passengers) {
-                    System.out.println(passenger);
-                }
-            }
-        } else {
-            System.out.println("You're not allowed to see passengers Information.");
         }
     }
 

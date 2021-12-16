@@ -19,7 +19,6 @@ public abstract class Vehicle {
     private String color;
     private String plateNumber;
 
-    @Builder(setterPrefix = "with")
     public Vehicle(String model, String color, String plateNumber) {
         this.model = model;
         this.color = color;

@@ -3,6 +3,9 @@ package ir.maktab58.onlinetaxisys.models.places;
 import lombok.*;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * @author Taban Soleymani
@@ -13,6 +16,9 @@ import javax.persistence.Entity;
 @ToString
 @EqualsAndHashCode
 public class Coordinates {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     int x;
     int y;
 

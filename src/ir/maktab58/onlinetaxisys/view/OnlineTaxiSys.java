@@ -2,8 +2,11 @@ package ir.maktab58.onlinetaxisys.view;
 
 import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
 import ir.maktab58.onlinetaxisys.models.Admin;
+import ir.maktab58.onlinetaxisys.models.Driver;
+import ir.maktab58.onlinetaxisys.models.Passenger;
 import ir.maktab58.onlinetaxisys.service.OnlineTaxiService;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -48,10 +51,25 @@ public class OnlineTaxiSys {
     }
 
     private void showAllPassengersInformation() {
-
+        System.out.println("Only admin can see passengersInfo list");
+        isUserAllowed();
+        List<Passenger> passengerList = onlineTaxiService.getAllPassengers();
+        if (passengerList.size() == 0) {
+            System.out.println("There is no passenger to show...");
+            return;
+        }
+        passengerList.forEach(System.out::println);
     }
 
     private void showAllDriversInformation() {
+        System.out.println("Only admin can see driversInfo list");
+        isUserAllowed();
+        List<Driver> driverList = onlineTaxiService.getAllDrivers();
+        if (driverList.size() == 0) {
+            System.out.println("There is no driver to show...");
+            return;
+        }
+        driverList.forEach(System.out::println);
     }
 
     private void showOngoingTravels() {
@@ -68,11 +86,27 @@ public class OnlineTaxiSys {
 
     private void addAGroupOfPassengers() {
         isUserAllowed();
+        System.out.println("How many Passengers would you like to add?");
+        int numOfPassengers = Integer.parseInt(scanner.nextLine().trim());
+        for (int i = 0; i < numOfPassengers; i++) {
 
+        }
     }
 
     private void addAGroupOfDrivers() {
         isUserAllowed();
+        System.out.println("How many Drivers would you like to add?");
+        int numOfDivers = Integer.parseInt(scanner.nextLine().trim());
+        for (int i = 0; i < numOfDivers; i++) {
+
+        }
+    }
+
+    private void addANewPassenger() {
+
+    }
+
+    private void addNewDriver() {
 
     }
 
