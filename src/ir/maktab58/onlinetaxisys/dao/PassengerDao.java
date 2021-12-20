@@ -65,4 +65,20 @@ public class PassengerDao extends BaseDaoInterfaceImpl<Passenger> {
         }
         return passenger;
     }
+
+    public Passenger findPassengerById(int passengerId) {
+        Passenger passenger;
+        try {
+            Session session = SessionUtil.getSession();
+            Transaction transaction = session.beginTransaction();
+            Query<Passenger> query = session.createQuery("from Passenger p where p.id=:id", Passenger.class);
+            query.setParameter("id", passengerId);
+            passenger = query.getSingleResult();
+            transaction.commit();
+            session.close();
+        } catch (NoResultException e) {
+            passenger = null;
+        }
+        return passenger;
+    }
 }

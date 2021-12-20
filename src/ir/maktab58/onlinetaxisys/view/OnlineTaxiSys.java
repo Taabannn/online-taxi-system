@@ -1,9 +1,11 @@
 package ir.maktab58.onlinetaxisys.view;
 
+import ir.maktab58.onlinetaxisys.enumeration.PaymentMode;
 import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
 import ir.maktab58.onlinetaxisys.models.Admin;
 import ir.maktab58.onlinetaxisys.models.Driver;
 import ir.maktab58.onlinetaxisys.models.Passenger;
+import ir.maktab58.onlinetaxisys.models.places.Coordinates;
 import ir.maktab58.onlinetaxisys.service.OnlineTaxiService;
 
 import java.util.List;
@@ -115,6 +117,78 @@ public class OnlineTaxiSys {
     }
 
     private void showPassengerMenu(int passengerId) {
+        boolean stateOfAttendance = onlineTaxiService.getPassengerStateOfAttendance(passengerId);
+        if (!stateOfAttendance)
+            System.out.println("Sorry you're still in travel.");
+        else {
+            boolean exit = false;
+            while (stateOfAttendance && !exit) {
+                stateOfAttendance = onlineTaxiService.getPassengerStateOfAttendance(passengerId);
+                System.out.println("""
+                        **********Passenger Menu**********
+                        1) Apply for a new travel (pay cash)
+                        2) Apply for a new travel (pay from your balance)3) Deposit your balance
+                        4) Back to main menu""");
+                String choice = scanner.nextLine().trim();
+                try {
+                    switch (choice) {
+                        case "1" -> applyForTravelPayCash(passengerId);
+                        case "2" -> applyForTravelPayFromYourBalance(passengerId);
+                        case "3" -> depositPassengerWallet(passengerId);
+                        case "4" -> exit = true;
+                        default -> throw OnlineTaxiSysEx.builder()
+                                .message("Invalid input command. Your choice must be an integer between 1 to 4.")
+                                .errorCode(400).build();
+                    }
+                } catch (RuntimeException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void depositPassengerWallet(int passengerId) {
+        System.out.println("How much do you want deposit your balance?");
+        String chargeStr = scanner.nextLine().trim();
+        long charge = Long.parseLong(chargeStr);
+        onlineTaxiService.depositPassengerWallet(passengerId, charge);
+        System.out.println("Your balance has updated successfully.");
+    }
+
+    private void applyForTravelPayFromYourBalance(int passengerId) {
+        getSourceAndDestination(passengerId, PaymentMode.ONLINE);
+    }
+
+    private void applyForTravelPayCash(int passengerId) {
+        getSourceAndDestination(passengerId, PaymentMode.CASH);
+    }
+
+    private void getSourceAndDestination(int passengerId, PaymentMode paymentMode){
+        System.out.println("Please enter source: ");
+        String source = scanner.nextLine().trim();
+        System.out.println("Please enter destination: ");
+        String destination = scanner.nextLine().trim();
+        makeATrip(passengerId, paymentMode, source, destination);
+    }
+
+    private void makeATrip(int passengerId, PaymentMode paymentMode, String source, String destination) {
+        String[] sourceXY = source.split(" ");
+        Coordinates sourceCoordinate = Coordinates.builder()
+                .withX(Integer.parseInt(sourceXY[0]))
+                .withY(Integer.parseInt(sourceXY[1])).build();
+        String[] destXY = destination.split(" ");
+        Coordinates desCoordinate = Coordinates.builder()
+                .withX(Integer.parseInt(destXY[0]))
+                .withY(Integer.parseInt(destXY[1])).build();
+        long cost = onlineTaxiService.calculateCost(sourceCoordinate, desCoordinate);
+        System.out.println("The cost is: " + cost + ". Do you want to continue?");
+        String choice = scanner.nextLine().trim();
+        if (choice.equalsIgnoreCase("yes")) {
+            if (paymentMode.equals(PaymentMode.CASH)) {
+                onlineTaxiService.assignDriverAndSave(passengerId, paymentMode, sourceCoordinate, desCoordinate);
+            }
+        }
+
 
     }
 

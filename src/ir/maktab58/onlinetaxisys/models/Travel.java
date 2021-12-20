@@ -3,10 +3,7 @@ package ir.maktab58.onlinetaxisys.models;
 import ir.maktab58.onlinetaxisys.enumeration.PaymentMode;
 import ir.maktab58.onlinetaxisys.enumeration.TravelStatus;
 import ir.maktab58.onlinetaxisys.models.places.Coordinates;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -15,6 +12,7 @@ import javax.persistence.*;
  */
 @Entity
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class Travel {

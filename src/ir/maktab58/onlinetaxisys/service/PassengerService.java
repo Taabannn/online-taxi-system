@@ -1,7 +1,6 @@
 package ir.maktab58.onlinetaxisys.service;
 
 import ir.maktab58.onlinetaxisys.dao.PassengerDao;
-import ir.maktab58.onlinetaxisys.models.Driver;
 import ir.maktab58.onlinetaxisys.models.Passenger;
 
 import java.util.List;
@@ -34,5 +33,15 @@ public class PassengerService {
         if (passenger != null)
             return passenger.getPassengerId();
         return 0;
+    }
+
+    public Passenger getPassengerById(int passengerId) {
+        return passengerDao.findPassengerById(passengerId);
+    }
+
+    public void updatePassengerWallet(int passengerId, long charge) {
+        Passenger passengerById = passengerDao.findPassengerById(passengerId);
+        passengerById.setBalance(passengerById.getPassengerId() + charge);
+        passengerDao.update(passengerById);
     }
 }
