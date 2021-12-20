@@ -2,10 +2,12 @@ package ir.maktab58.onlinetaxisys.dao;
 
 import ir.maktab58.onlinetaxisys.dao.singletonsessionfactory.SessionUtil;
 import ir.maktab58.onlinetaxisys.models.Passenger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 
 /**
@@ -45,5 +47,22 @@ public class PassengerDao extends BaseDaoInterfaceImpl<Passenger> {
         transaction.commit();
         session.close();
         return passengerList;
+    }
+
+    public Passenger findUserByUserAndPass(String username, String password) {
+        Passenger passenger;
+        try {
+            Session session = SessionUtil.getSession();
+            Transaction transaction = session.beginTransaction();
+            Query<Passenger> query = session.createQuery("from Passenger p where p.username=:username and p.password=:password", Passenger.class);
+            query.setParameter("username", username);
+            query.setParameter("username", password);
+            passenger = query.getSingleResult();
+            transaction.commit();
+            session.close();
+        } catch (NoResultException e) {
+            passenger = null;
+        }
+        return passenger;
     }
 }

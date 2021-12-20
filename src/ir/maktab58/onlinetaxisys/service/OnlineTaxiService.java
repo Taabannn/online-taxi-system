@@ -115,6 +115,14 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
                     .errorCode(400).build();
     }
 
+    public int getPassengerId(String username, String password) {
+        return passengerService.getPassengerIdByUserAndPass(username, password);
+    }
+
+    public int getDriverId(String username, String password) {
+        return driverService.getDriverIdByUserAndPass(username, password);
+    }
+
     /*
     private boolean isVehicleRegistered(Driver newDriver){
         for (Driver driver : drivers){

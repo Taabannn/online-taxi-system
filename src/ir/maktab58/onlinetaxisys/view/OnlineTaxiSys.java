@@ -96,7 +96,17 @@ public class OnlineTaxiSys {
     }
 
     private void passengerLogin() {
-
+        System.out.println("Please enter your username: ");
+        String username = scanner.nextLine().trim();
+        System.out.println("Please enter your password: ");
+        String password = scanner.nextLine().trim();
+        int passengerId = onlineTaxiService.getPassengerId(username, password);
+        if (passengerId != 0)
+            showPassengerMenu(passengerId);
+        else
+            throw OnlineTaxiSysEx.builder()
+                    .message("You might have entered wrong username or password")
+                    .errorCode(400).build();
     }
 
     private void passengerSignup() {
@@ -128,7 +138,17 @@ public class OnlineTaxiSys {
     }
 
     private void driverLogin() {
-
+        System.out.println("Please enter your username: ");
+        String username = scanner.nextLine().trim();
+        System.out.println("Please enter your password: ");
+        String password = scanner.nextLine().trim();
+        int driverId = onlineTaxiService.getDriverId(username, password);
+        if (driverId != 0)
+            showDriverMenu(driverId);
+        else
+            throw OnlineTaxiSysEx.builder()
+                    .message("You might have entered wrong username or password")
+                    .errorCode(400).build();
     }
 
     private void driverSignup() {

@@ -27,4 +27,11 @@ public class DriverService {
     public List<Driver> getDriverByNationalCode(String nationalCode) {
         return driverDao.findDriverByNationalCode(nationalCode);
     }
+
+    public int getDriverIdByUserAndPass(String username, String password) {
+        Driver driver = driverDao.findDriverByUserAndPass(username, password);
+        if (driver != null)
+            return  driver.getDriverId();
+        return 0;
+    }
 }

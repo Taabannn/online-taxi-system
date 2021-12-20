@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 
 /**
@@ -45,5 +46,22 @@ public class DriverDao extends BaseDaoInterfaceImpl<Driver> {
         transaction.commit();
         session.close();
         return driverList;
+    }
+
+    public Driver findDriverByUserAndPass(String username, String password) {
+        Driver driver;
+        try {
+            Session session = SessionUtil.getSession();
+            Transaction transaction = session.beginTransaction();
+            Query<Driver> query = session.createQuery("from Driver d where d.username=:username and d.password=:password", Driver.class);
+            query.setParameter("username", username);
+            query.setParameter("username", password);
+            driver = query.getSingleResult();
+            transaction.commit();
+            session.close();
+        } catch (NoResultException e) {
+            driver = null;
+        }
+        return driver;
     }
 }

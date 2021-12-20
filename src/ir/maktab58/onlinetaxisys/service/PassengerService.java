@@ -28,4 +28,11 @@ public class PassengerService {
     public int saveNewPassenger(Passenger passenger) {
         return passengerDao.save(passenger);
     }
+
+    public int getPassengerIdByUserAndPass(String username, String password) {
+        Passenger passenger = passengerDao.findUserByUserAndPass(username, password);
+        if (passenger != null)
+            return passenger.getPassengerId();
+        return 0;
+    }
 }
