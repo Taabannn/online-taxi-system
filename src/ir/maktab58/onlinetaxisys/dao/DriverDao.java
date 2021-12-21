@@ -55,7 +55,7 @@ public class DriverDao extends BaseDaoImpl<Driver> {
             Transaction transaction = session.beginTransaction();
             Query<Driver> query = session.createQuery("from Driver d where d.username=:username and d.password=:password", Driver.class);
             query.setParameter("username", username);
-            query.setParameter("username", password);
+            query.setParameter("password", password);
             driver = query.getSingleResult();
             transaction.commit();
             session.close();

@@ -3,6 +3,6 @@ package ir.maktab58.onlinetaxisys.enumeration;
 /**
  * @author Taban Soleymani
  */
-public enum TravelStatus {
+public enum TripStatus {
     UNFINISHED, FINISHED
 }

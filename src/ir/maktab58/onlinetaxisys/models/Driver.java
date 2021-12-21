@@ -24,11 +24,11 @@ public class Driver {
     private Date birthDate;
     private String phoneNumber;
     private String nationalCode;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Vehicle vehicle;
     private StateOfAttendance stateOfAttendance = StateOfAttendance.WAITING_FOR_TRAVEL;
     private long wallet;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Coordinate currentLocation;
 
     @Builder(setterPrefix = "with")

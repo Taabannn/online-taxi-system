@@ -1,5 +1,5 @@
 package ir.maktab58.onlinetaxisys.service;
 
-public interface OnlineTaxiInterface {
+public interface OnlineTaxi {
 
 }

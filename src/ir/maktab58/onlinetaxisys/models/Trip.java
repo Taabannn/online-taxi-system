@@ -1,7 +1,7 @@
 package ir.maktab58.onlinetaxisys.models;
 
 import ir.maktab58.onlinetaxisys.enumeration.PaymentMode;
-import ir.maktab58.onlinetaxisys.enumeration.TravelStatus;
+import ir.maktab58.onlinetaxisys.enumeration.TripStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Travel {
+public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int travelId;
@@ -27,14 +27,14 @@ public class Travel {
     @OneToOne
     private Coordinate destination;
     @Enumerated(EnumType.STRING)
-    private TravelStatus status;
+    private TripStatus status;
     private boolean isPaid;
     private long cost;
     @Enumerated(EnumType.STRING)
     private PaymentMode paymentMode;
 
     @Builder(setterPrefix = "with")
-    public Travel(int travelId, Passenger passenger, Driver driver, Coordinate source, Coordinate destination, TravelStatus status, boolean isPaid, long cost, PaymentMode paymentMode) {
+    public Trip(int travelId, Passenger passenger, Driver driver, Coordinate source, Coordinate destination, TripStatus status, boolean isPaid, long cost, PaymentMode paymentMode) {
         this.travelId = travelId;
         this.passenger = passenger;
         this.driver = driver;

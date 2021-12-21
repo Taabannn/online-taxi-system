@@ -55,7 +55,7 @@ public class PassengerDao extends BaseDaoImpl<Passenger> {
             Transaction transaction = session.beginTransaction();
             Query<Passenger> query = session.createQuery("from Passenger p where p.username=:username and p.password=:password", Passenger.class);
             query.setParameter("username", username);
-            query.setParameter("username", password);
+            query.setParameter("password", password);
             passenger = query.getSingleResult();
             transaction.commit();
             session.close();

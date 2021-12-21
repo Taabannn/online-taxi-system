@@ -103,8 +103,10 @@ public class OnlineTaxiSys {
         System.out.println("Please enter your password: ");
         String password = scanner.nextLine().trim();
         int passengerId = onlineTaxiService.getPassengerId(username, password);
-        if (passengerId != 0)
+        if (passengerId != 0) {
+            System.out.println("You've logged in successfully.");
             showPassengerMenu(passengerId);
+        }
         else
             throw OnlineTaxiSysEx.builder()
                     .message("You might have entered wrong username or password")
@@ -113,6 +115,7 @@ public class OnlineTaxiSys {
 
     private void passengerSignup() {
         int passengerId = addANewPassenger();
+        System.out.println("You've registered successfully.");
         showPassengerMenu(passengerId);
     }
 
@@ -217,8 +220,10 @@ public class OnlineTaxiSys {
         System.out.println("Please enter your password: ");
         String password = scanner.nextLine().trim();
         int driverId = onlineTaxiService.getDriverId(username, password);
-        if (driverId != 0)
+        if (driverId != 0) {
+            System.out.println("you've logged in successfully.");
             showDriverMenu(driverId);
+        }
         else
             throw OnlineTaxiSysEx.builder()
                     .message("You might have entered wrong username or password")
@@ -227,6 +232,7 @@ public class OnlineTaxiSys {
 
     private void driverSignup() {
         int driverId = addANewDriver();
+        System.out.println("You've registered successfully.");
         showDriverMenu(driverId);
     }
 

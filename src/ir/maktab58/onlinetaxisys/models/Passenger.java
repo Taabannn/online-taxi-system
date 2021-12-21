@@ -28,7 +28,7 @@ public class Passenger {
     private StateOfAttendance stateOfAttendance = StateOfAttendance.WAITING_FOR_TRAVEL;
 
     @Builder(setterPrefix = "with")
-    public Passenger(int passengerId, String username, String password, String firstName, String lastName, Date birthDate, String phoneNumber, String nationalCode, long balance, StateOfAttendance stateOfAttendance) {
+    public Passenger(int passengerId, String username, String password, String firstName, String lastName, Date birthDate, String phoneNumber, String nationalCode, long balance) {
         this.passengerId = passengerId;
         this.username = username;
         this.password = password;
@@ -38,6 +38,5 @@ public class Passenger {
         this.phoneNumber = phoneNumber;
         this.nationalCode = nationalCode;
         this.balance = balance;
-        this.stateOfAttendance = stateOfAttendance;
     }
 }

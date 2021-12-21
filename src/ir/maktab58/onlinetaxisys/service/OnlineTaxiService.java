@@ -2,11 +2,11 @@ package ir.maktab58.onlinetaxisys.service;
 
 import ir.maktab58.onlinetaxisys.enumeration.PaymentMode;
 import ir.maktab58.onlinetaxisys.enumeration.StateOfAttendance;
-import ir.maktab58.onlinetaxisys.enumeration.TravelStatus;
+import ir.maktab58.onlinetaxisys.enumeration.TripStatus;
 import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
 import ir.maktab58.onlinetaxisys.models.Driver;
 import ir.maktab58.onlinetaxisys.models.Passenger;
-import ir.maktab58.onlinetaxisys.models.Travel;
+import ir.maktab58.onlinetaxisys.models.Trip;
 import ir.maktab58.onlinetaxisys.models.Coordinate;
 import ir.maktab58.onlinetaxisys.models.vehicle.Vehicle;
 import ir.maktab58.onlinetaxisys.service.factory.VehicleFactory;
@@ -16,14 +16,14 @@ import ir.maktab58.onlinetaxisys.service.validator.UserAndPassValidator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnlineTaxiService implements OnlineTaxiInterface {
+public class OnlineTaxiService implements OnlineTaxi {
     private final PassengerService passengerService = new PassengerService();
     private final DriverService driverService = new DriverService();
-    private final TravelService travelService = new TravelService();
+    private final TripService tripService = new TripService();
     private static final long COST_PER_METER = 1000;
     List<Driver> drivers = new ArrayList<>();
     ArrayList<Passenger> passengers = new ArrayList<>();
-    ArrayList<Travel> travels = new ArrayList<>();
+    ArrayList<Trip> travels = new ArrayList<>();
 
     public List<Passenger> getAllPassengers() {
         return passengerService.getAllPassengers();
@@ -92,7 +92,9 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
         String color = tokens[8];
         int x = Integer.parseInt(tokens[9]);
         int y = Integer.parseInt(tokens[10]);
-        Coordinate currentLocation = new Coordinate(x, y);
+        Coordinate currentLocation = Coordinate.builder()
+                                    .withX(x)
+                                    .withY(y).build();
         validateUserPassNationalCode(username, password, nationalCode);
         checkDriverExisted(username, nationalCode);
         Vehicle vehicle = VehicleFactory.getVehicleType(vehicleType, plateNumber, model, color);
@@ -148,15 +150,15 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
         Driver driver = findNearestDrive(sourceCoordinate, desCoordinate);
         driver.setStateOfAttendance(StateOfAttendance.IN_TRAVEL);
         passenger.setStateOfAttendance(StateOfAttendance.IN_TRAVEL);
-        Travel travel = Travel.builder()
+        Trip travel = Trip.builder()
                 .withDriver(driver)
                 .withPassenger(passenger)
                 .withIsPaid(false)
                 .withSource(sourceCoordinate)
                 .withDestination(desCoordinate)
                 .withPaymentMode(paymentMode)
-                .withStatus(TravelStatus.UNFINISHED).build();
-        travelService.saveTravel(travel);
+                .withStatus(TripStatus.UNFINISHED).build();
+        tripService.saveTrip(travel);
     }
 
     private Driver findNearestDrive(Coordinate sourceCoordinate, Coordinate desCoordinate) {
