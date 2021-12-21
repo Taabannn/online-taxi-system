@@ -1,4 +1,4 @@
-package ir.maktab58.onlinetaxisys.models.vehiclesfactory;
+package ir.maktab58.onlinetaxisys.models.vehicle;
 
 import lombok.Builder;
 import lombok.NoArgsConstructor;

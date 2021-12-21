@@ -1,4 +1,4 @@
-package ir.maktab58.onlinetaxisys.service.singletonvalidator;
+package ir.maktab58.onlinetaxisys.service.validator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +13,7 @@ public class NationalCodeValidator {
     private NationalCodeValidator() {
     }
 
-    public static NationalCodeValidator getInstance() {
+    public static NationalCodeValidator getSingletonInstance() {
         return nationalCodeValidator;
     }
 

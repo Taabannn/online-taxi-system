@@ -17,12 +17,12 @@
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
 
-        <mapping class="ir.maktab58.onlinetaxisys.models.places.Coordinates"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.Car"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.MotorCycle"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.PickupTruck"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.Van"/>
-        <mapping class="ir.maktab58.onlinetaxisys.models.vehiclesfactory.Vehicle"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.Coordinate"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehicle.Car"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehicle.MotorCycle"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehicle.PickupTruck"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehicle.Van"/>
+        <mapping class="ir.maktab58.onlinetaxisys.models.vehicle.Vehicle"/>
         <mapping class="ir.maktab58.onlinetaxisys.models.Driver"/>
         <mapping class="ir.maktab58.onlinetaxisys.models.Passenger"/>
         <mapping class="ir.maktab58.onlinetaxisys.models.Travel"/>

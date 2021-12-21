@@ -5,7 +5,7 @@ import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
 import ir.maktab58.onlinetaxisys.models.Admin;
 import ir.maktab58.onlinetaxisys.models.Driver;
 import ir.maktab58.onlinetaxisys.models.Passenger;
-import ir.maktab58.onlinetaxisys.models.places.Coordinates;
+import ir.maktab58.onlinetaxisys.models.Coordinate;
 import ir.maktab58.onlinetaxisys.service.OnlineTaxiService;
 
 import java.util.List;
@@ -173,11 +173,11 @@ public class OnlineTaxiSys {
 
     private void makeATrip(int passengerId, PaymentMode paymentMode, String source, String destination) {
         String[] sourceXY = source.split(" ");
-        Coordinates sourceCoordinate = Coordinates.builder()
+        Coordinate sourceCoordinate = Coordinate.builder()
                 .withX(Integer.parseInt(sourceXY[0]))
                 .withY(Integer.parseInt(sourceXY[1])).build();
         String[] destXY = destination.split(" ");
-        Coordinates desCoordinate = Coordinates.builder()
+        Coordinate desCoordinate = Coordinate.builder()
                 .withX(Integer.parseInt(destXY[0]))
                 .withY(Integer.parseInt(destXY[1])).build();
         long cost = onlineTaxiService.calculateCost(sourceCoordinate, desCoordinate);

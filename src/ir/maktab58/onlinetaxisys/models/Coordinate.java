@@ -1,4 +1,4 @@
-package ir.maktab58.onlinetaxisys.models.places;
+package ir.maktab58.onlinetaxisys.models;
 
 import lombok.*;
 
@@ -15,7 +15,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Coordinates {
+public class Coordinate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -23,7 +23,7 @@ public class Coordinates {
     int y;
 
     @Builder(setterPrefix = "with")
-    public Coordinates(int x, int y) {
+    public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
     }

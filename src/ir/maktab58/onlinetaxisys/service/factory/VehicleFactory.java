@@ -1,7 +1,8 @@
-package ir.maktab58.onlinetaxisys.models.vehiclesfactory;
+package ir.maktab58.onlinetaxisys.service.factory;
 
 import ir.maktab58.onlinetaxisys.enumeration.VehicleType;
 import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
+import ir.maktab58.onlinetaxisys.models.vehicle.*;
 
 /**
  * @author Taban Soleymani

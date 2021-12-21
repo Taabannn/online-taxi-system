@@ -7,11 +7,11 @@ import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
 import ir.maktab58.onlinetaxisys.models.Driver;
 import ir.maktab58.onlinetaxisys.models.Passenger;
 import ir.maktab58.onlinetaxisys.models.Travel;
-import ir.maktab58.onlinetaxisys.models.places.Coordinates;
-import ir.maktab58.onlinetaxisys.models.vehiclesfactory.Vehicle;
-import ir.maktab58.onlinetaxisys.models.vehiclesfactory.VehicleFactory;
-import ir.maktab58.onlinetaxisys.service.singletonvalidator.NationalCodeValidator;
-import ir.maktab58.onlinetaxisys.service.singletonvalidator.UserAndPassValidator;
+import ir.maktab58.onlinetaxisys.models.Coordinate;
+import ir.maktab58.onlinetaxisys.models.vehicle.Vehicle;
+import ir.maktab58.onlinetaxisys.service.factory.VehicleFactory;
+import ir.maktab58.onlinetaxisys.service.validator.NationalCodeValidator;
+import ir.maktab58.onlinetaxisys.service.validator.UserAndPassValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,12 +67,12 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
     }
 
     public void validateUserPassNationalCode(String username, String password, String nationalCode) {
-        boolean userAndPassValid = UserAndPassValidator.getInstance().isUserAndPassValid(username, password);
+        boolean userAndPassValid = UserAndPassValidator.getSingletonInstance().isUserAndPassValid(username, password);
         if (!userAndPassValid)
             throw OnlineTaxiSysEx.builder()
                     .message("Invalid user or pass")
                     .errorCode(400).build();
-        boolean nationalCodeValid = NationalCodeValidator.getInstance().isNationalCodeValid(nationalCode);
+        boolean nationalCodeValid = NationalCodeValidator.getSingletonInstance().isNationalCodeValid(nationalCode);
         if (!nationalCodeValid)
             throw OnlineTaxiSysEx.builder()
                     .message("Invalid national code")
@@ -92,7 +92,7 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
         String color = tokens[8];
         int x = Integer.parseInt(tokens[9]);
         int y = Integer.parseInt(tokens[10]);
-        Coordinates currentLocation = new Coordinates(x, y);
+        Coordinate currentLocation = new Coordinate(x, y);
         validateUserPassNationalCode(username, password, nationalCode);
         checkDriverExisted(username, nationalCode);
         Vehicle vehicle = VehicleFactory.getVehicleType(vehicleType, plateNumber, model, color);
@@ -137,12 +137,12 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
         passengerService.updatePassengerWallet(passengerId, charge);
     }
 
-    public long calculateCost(Coordinates sourceCoordinate, Coordinates desCoordinate) {
+    public long calculateCost(Coordinate sourceCoordinate, Coordinate desCoordinate) {
         double sqrt = Math.sqrt((desCoordinate.getY() - sourceCoordinate.getY()) ^ 2 + (desCoordinate.getX() - sourceCoordinate.getX()) ^ 2);
         return (long) (sqrt * COST_PER_METER);
     }
 
-    public void assignDriverAndSave(int passengerId, PaymentMode paymentMode, Coordinates sourceCoordinate, Coordinates desCoordinate) {
+    public void assignDriverAndSave(int passengerId, PaymentMode paymentMode, Coordinate sourceCoordinate, Coordinate desCoordinate) {
         Passenger passenger = passengerService.getPassengerById(passengerId);
         drivers = driverService.getAllDrivers();
         Driver driver = findNearestDrive(sourceCoordinate, desCoordinate);
@@ -159,12 +159,12 @@ public class OnlineTaxiService implements OnlineTaxiInterface {
         travelService.saveTravel(travel);
     }
 
-    private Driver findNearestDrive(Coordinates sourceCoordinate, Coordinates desCoordinate) {
+    private Driver findNearestDrive(Coordinate sourceCoordinate, Coordinate desCoordinate) {
         if (drivers.size() == 0)
             throw OnlineTaxiSysEx.builder()
                     .message("There is no driver.")
                     .errorCode(500).build();
-        Coordinates currentLocation = drivers.get(0).getCurrentLocation();
+        Coordinate currentLocation = drivers.get(0).getCurrentLocation();
         //double distance = Math.sqrt();
         //drivers.forEach();
         return null;

@@ -1,8 +1,7 @@
 package ir.maktab58.onlinetaxisys.models;
 
 import ir.maktab58.onlinetaxisys.enumeration.StateOfAttendance;
-import ir.maktab58.onlinetaxisys.models.places.Coordinates;
-import ir.maktab58.onlinetaxisys.models.vehiclesfactory.Vehicle;
+import ir.maktab58.onlinetaxisys.models.vehicle.Vehicle;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,10 +29,10 @@ public class Driver {
     private StateOfAttendance stateOfAttendance = StateOfAttendance.WAITING_FOR_TRAVEL;
     private long wallet;
     @OneToOne
-    private Coordinates currentLocation;
+    private Coordinate currentLocation;
 
     @Builder(setterPrefix = "with")
-    public Driver(int driverId, String username, String password, String firstName, String lastName, Date birthDate, String phoneNumber, String nationalCode, Vehicle vehicle, StateOfAttendance stateOfAttendance, long wallet, Coordinates currentLocation) {
+    public Driver(int driverId, String username, String password, String firstName, String lastName, Date birthDate, String phoneNumber, String nationalCode, Vehicle vehicle, StateOfAttendance stateOfAttendance, long wallet, Coordinate currentLocation) {
         this.driverId = driverId;
         this.username = username;
         this.password = password;

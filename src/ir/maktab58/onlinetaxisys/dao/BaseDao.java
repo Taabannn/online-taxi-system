@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @author Taban Soleymani
  */
-public interface BaseDaoInterface<T> {
+public interface BaseDao<T> {
     T get(Class<T> cl, Integer id);
     int save(T object);
     int save(T object, String entityName);

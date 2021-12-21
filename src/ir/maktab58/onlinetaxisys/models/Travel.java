@@ -2,7 +2,6 @@ package ir.maktab58.onlinetaxisys.models;
 
 import ir.maktab58.onlinetaxisys.enumeration.PaymentMode;
 import ir.maktab58.onlinetaxisys.enumeration.TravelStatus;
-import ir.maktab58.onlinetaxisys.models.places.Coordinates;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,9 +23,9 @@ public class Travel {
     @OneToOne
     private Driver driver;
     @OneToOne
-    private Coordinates source;
+    private Coordinate source;
     @OneToOne
-    private Coordinates destination;
+    private Coordinate destination;
     @Enumerated(EnumType.STRING)
     private TravelStatus status;
     private boolean isPaid;
@@ -35,7 +34,7 @@ public class Travel {
     private PaymentMode paymentMode;
 
     @Builder(setterPrefix = "with")
-    public Travel(int travelId, Passenger passenger, Driver driver, Coordinates source, Coordinates destination, TravelStatus status, boolean isPaid, long cost, PaymentMode paymentMode) {
+    public Travel(int travelId, Passenger passenger, Driver driver, Coordinate source, Coordinate destination, TravelStatus status, boolean isPaid, long cost, PaymentMode paymentMode) {
         this.travelId = travelId;
         this.passenger = passenger;
         this.driver = driver;

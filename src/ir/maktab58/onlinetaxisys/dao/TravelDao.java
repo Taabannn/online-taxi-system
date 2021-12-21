@@ -5,5 +5,5 @@ import ir.maktab58.onlinetaxisys.models.Travel;
 /**
  * @author Taban Soleymani
  */
-public class TravelDao extends BaseDaoInterfaceImpl<Travel> {
+public class TravelDao extends BaseDaoImpl<Travel> {
 }

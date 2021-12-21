@@ -1,8 +1,7 @@
 package ir.maktab58.onlinetaxisys.dao;
 
-import ir.maktab58.onlinetaxisys.dao.singletonsessionfactory.SessionUtil;
+import ir.maktab58.onlinetaxisys.utils.SessionUtil;
 import ir.maktab58.onlinetaxisys.models.Passenger;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -13,7 +12,7 @@ import java.util.List;
 /**
  * @author Taban Soleymani
  */
-public class PassengerDao extends BaseDaoInterfaceImpl<Passenger> {
+public class PassengerDao extends BaseDaoImpl<Passenger> {
     public List<Passenger> getAllPassengers() {
         List<Passenger> passengerList;
         Session session = SessionUtil.getSession();

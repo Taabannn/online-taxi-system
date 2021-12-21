@@ -1,6 +1,6 @@
 package ir.maktab58.onlinetaxisys.dao;
 
-import ir.maktab58.onlinetaxisys.dao.singletonsessionfactory.SessionUtil;
+import ir.maktab58.onlinetaxisys.utils.SessionUtil;
 import ir.maktab58.onlinetaxisys.models.Driver;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Taban Soleymani
  */
-public class DriverDao extends BaseDaoInterfaceImpl<Driver> {
+public class DriverDao extends BaseDaoImpl<Driver> {
     public List<Driver> getAllDrivers() {
         List<Driver> driverList;
         Session session = SessionUtil.getSession();

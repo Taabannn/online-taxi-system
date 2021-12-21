@@ -1,4 +1,4 @@
-package ir.maktab58.onlinetaxisys.service.singletonvalidator;
+package ir.maktab58.onlinetaxisys.service.validator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +18,7 @@ public class UserAndPassValidator {
     private UserAndPassValidator() {
     }
 
-    public static UserAndPassValidator getInstance() {
+    public static UserAndPassValidator getSingletonInstance() {
         return userAndPassValidator;
     }
 

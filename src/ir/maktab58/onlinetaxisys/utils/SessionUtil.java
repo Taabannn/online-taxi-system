@@ -1,4 +1,4 @@
-package ir.maktab58.onlinetaxisys.dao.singletonsessionfactory;
+package ir.maktab58.onlinetaxisys.utils;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
