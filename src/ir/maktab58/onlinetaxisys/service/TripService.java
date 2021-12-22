@@ -20,4 +20,8 @@ public class TripService {
     public void updateTripStatus(Trip trip) {
         tripDao.update(trip);
     }
+
+    public void updateTripIsPaid(Trip tripByDriverId) {
+        tripDao.update(tripByDriverId);
+    }
 }

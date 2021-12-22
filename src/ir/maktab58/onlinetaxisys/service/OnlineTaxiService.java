@@ -189,135 +189,19 @@ public class OnlineTaxiService implements OnlineTaxi {
         passengerService.updatePassengerStateOfAttendance(passenger);
     }
 
+    public boolean isTravelPaymentModeCash(int driverId) {
+        Trip trip = tripService.findTripByDriverId(driverId);
+        return trip.getPaymentMode().equals(PaymentMode.CASH);
+    }
+
+    public void updateIsPaidInTravel(int driverId) {
+        Trip tripByDriverId = tripService.findTripByDriverId(driverId);
+        tripByDriverId.setPaid(true);
+        tripService.updateTripIsPaid(tripByDriverId);
+    }
+
 
     /*
-    private void showDriverMenu(Driver driver){
-        passengers = passengerAccess.getAllPassengers();
-        drivers = driversAccess.getAllDrivers();
-        travels = travelAccess.getAllTravels(passengers, drivers);
-        boolean stateOfAttendance = driver.isStateOfAttendance();
-        Scanner scanner = new Scanner(System.in);
-        if(!stateOfAttendance)
-            System.out.println("You're still waiting for travel.");
-        boolean confirmed = calcPassengerStateOfAttendance(driver);
-        if (!confirmed)
-            confirmed = confirmOrCancelTravel(driver);
-        while (stateOfAttendance && confirmed) {
-            System.out.println("**********Driver Menu**********");
-            System.out.println("1) Confirm passenger payment");
-            System.out.println("2) Travel is finished");
-            System.out.println("3) Back to main menu");
-            String choice = deleteLastSpaces(scanner.nextLine());
-            if (choice.equals("1")) {
-                confirmPassengerPayment(driver);
-            } else if (choice.equals("2")) {
-                confirmTravelIsFinished(driver);
-            } else if (choice.equals("3")) {
-                break;
-            } else {
-                System.out.println("Invalid input command. Your choice must be an integer between 1 to 3.");
-            }
-        }
-    }
-
-    private boolean confirmOrCancelTravel(Driver driver){
-        System.out.println("First of all you must confirmed assigned travel.");
-        System.out.println("Do you want to cancel or confirm travel?");
-        Scanner scanner = new Scanner(System.in);
-        String choice = scanner.nextLine().trim();
-        if (choice.equalsIgnoreCase("confirm")){
-            for (Travel travel : travels) {
-                if (travel.getDriver().equals(driver) && !travel.isStatus()){
-                    travel.getPassenger().setStateOfAttendance(true);
-                    passengerAccess.updatePassengerStateOfAttendance(travel.getPassenger());
-                }
-            }
-            return true;
-        } else if(choice.equalsIgnoreCase("cancel")) {
-            for (Travel travel : travels) {
-                if (travel.getDriver().equals(driver) && !travel.isStatus()){
-                    driver.setStateOfAttendance(false);
-                    driversAccess.updateDriverStateOfAttendance(driver);
-                    if (travel.isPaymentMode() && travel.isPaid()){
-                        driver.setWallet(driver.getWallet() - travel.getCost());
-                        driversAccess.updateDriverWallet(driver);
-                    }
-                    travel.assignNewDriver(drivers.indexOf(driver), drivers);
-                    travelAccess.updateDriver(travel);
-                    driversAccess.updateDriverStateOfAttendance(travel.getDriver());
-                    if (travel.isPaymentMode() && travel.isPaid()){
-                        driver.setWallet(travel.getDriver().getWallet() + travel.getCost());
-                        driversAccess.updateDriverWallet(travel.getDriver());
-                    }
-                }
-            }
-            return false;
-        } else {
-            System.out.println("Invalid Input, please try later.");
-            return false;
-        }
-    }
-
-    private boolean calcPassengerStateOfAttendance (Driver driver){
-        for (Travel travel : travels) {
-            if (travel.getDriver().equals(driver) && !travel.isStatus()) {
-                return travel.getPassenger().isStateOfAttendance();
-            }
-        }
-        return false;
-    }
-
-    private void confirmTravelIsFinished(Driver driver){
-        passengers = passengerAccess.getAllPassengers();
-        drivers = driversAccess.getAllDrivers();
-        travels = travelAccess.getAllTravels(passengers, drivers);
-        for (Travel travel : travels) {
-            if (travel.getDriver().equals(driver) && !travel.isStatus()){
-                if (travel.isPaid()) {
-                    changeDriverAndPassengerStatus(travel, travel.getDriver());
-                    return;
-                }
-                System.out.println("Sorry. You didn't receive payments, so you can't finish travel.");
-            }
-        }
-    }
-
-    private void changeDriverAndPassengerStatus(Travel travel, Driver driver){
-        System.out.println("Are you sure to finish travel?");
-        Scanner scanner = new Scanner(System.in);
-        if (deleteLastSpaces(scanner.nextLine()).equalsIgnoreCase("Yes")) {
-            travel.setStatus(true);
-            int result = travelAccess.updateStatusOfTravel(travel);
-            if (result == 1){
-                driver.setStateOfAttendance(false);
-                driversAccess.updateDriverStateOfAttendance(driver);
-                driver.setCurrentLocation(new Coordinates(travel.getDestination()));
-                driversAccess.updateDriverCurrentLocation(driver);
-                travel.getPassenger().setStateOfAttendance(false);
-                passengerAccess.updatePassengerStateOfAttendance(travel.getPassenger());
-                System.out.println("Your travel is finished successfully.");
-            } else
-                System.out.println("Sorry! unable to process. Please try again.");
-        }
-    }
-
-    private void confirmPassengerPayment(Driver driver){
-        passengers = passengerAccess.getAllPassengers();
-        drivers = driversAccess.getAllDrivers();
-        travels = travelAccess.getAllTravels(passengers, drivers);
-        for (Travel travel : travels) {
-            if (travel.getDriver().equals(driver)){
-                if (!travel.isPaymentMode()) {
-                    if (travel.isPaid()) {
-                        System.out.println("You already confirmed that travel is paid.");
-                        return;
-                    }
-                    changeTravelPayment(travel);
-                }
-            }
-        }
-    }
-
     private void applyForTravelPayFromYourBalance(Passenger passenger){
         Travel travel = getSourceAndDestination(passenger, true);
         if (travel.getCost() <= passenger.getBalance()){

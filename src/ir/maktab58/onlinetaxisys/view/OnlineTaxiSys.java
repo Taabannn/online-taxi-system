@@ -269,8 +269,17 @@ public class OnlineTaxiSys {
     }
 
     private void confirmPassengerPayment(int driverId) {
-
-
+        boolean isCash = onlineTaxiService.isTravelPaymentModeCash(driverId);
+        if (isCash) {
+            System.out.println("Are you sure?");
+            String ans = scanner.nextLine().trim();
+            if (ans.equalsIgnoreCase("yes"))
+                onlineTaxiService.updateIsPaidInTravel(driverId);
+        }
+        else
+            throw OnlineTaxiSysEx.builder()
+                    .message("You could confirm payment of travels that their payment mode is CASH.")
+                    .errorCode(400).build();
     }
 
     private void addAGroupOfPassengers() {
