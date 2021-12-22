@@ -40,6 +40,10 @@ public class DriverService {
     }
 
     public void updateDriverStateOfAttendance(Driver driver) {
-        driverDao.update(drivers);
+        driverDao.update(driver);
+    }
+
+    public List<Driver> getWaitingForTravelDrivers() {
+        return driverDao.getWaitingForTravelDrivers();
     }
 }

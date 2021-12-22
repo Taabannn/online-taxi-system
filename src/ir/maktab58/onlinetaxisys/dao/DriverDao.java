@@ -1,5 +1,6 @@
 package ir.maktab58.onlinetaxisys.dao;
 
+import ir.maktab58.onlinetaxisys.enumeration.StateOfAttendance;
 import ir.maktab58.onlinetaxisys.utils.SessionUtil;
 import ir.maktab58.onlinetaxisys.models.Driver;
 import org.hibernate.Session;
@@ -79,5 +80,17 @@ public class DriverDao extends BaseDaoImpl<Driver> {
             driver = null;
         }
         return driver;
+    }
+
+    public List<Driver> getWaitingForTravelDrivers() {
+        List<Driver> driverList;
+        Session session = SessionUtil.getSession();
+        Transaction transaction = session.beginTransaction();
+        Query<Driver> driverQuery = session.createQuery("from Driver d where d.stateOfAttendance=:stateOfDriver", Driver.class);
+        driverQuery.setParameter("stateOfDriver", "WAITING_FOR_TRAVEL");
+        driverList = driverQuery.getResultList();
+        transaction.commit();
+        session.close();
+        return driverList;
     }
 }

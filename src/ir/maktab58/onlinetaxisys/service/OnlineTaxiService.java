@@ -146,10 +146,11 @@ public class OnlineTaxiService implements OnlineTaxi {
 
     public void assignDriverAndSave(int passengerId, PaymentMode paymentMode, Coordinate sourceCoordinate, Coordinate desCoordinate) {
         Passenger passenger = passengerService.getPassengerById(passengerId);
-        drivers = driverService.getAllDrivers();
-        Driver driver = findNearestDrive(sourceCoordinate, desCoordinate);
+        drivers = driverService.getWaitingForTravelDrivers();
+        Driver driver = findNearestDriver(sourceCoordinate, desCoordinate);
         driver.setStateOfAttendance(StateOfAttendance.IN_TRAVEL);
         passenger.setStateOfAttendance(StateOfAttendance.IN_TRAVEL);
+        long cost = calculateCost(sourceCoordinate, desCoordinate);
         Trip travel = Trip.builder()
                 .withDriver(driver)
                 .withPassenger(passenger)
@@ -157,19 +158,28 @@ public class OnlineTaxiService implements OnlineTaxi {
                 .withSource(sourceCoordinate)
                 .withDestination(desCoordinate)
                 .withPaymentMode(paymentMode)
-                .withStatus(TripStatus.UNFINISHED).build();
+                .withStatus(TripStatus.UNFINISHED)
+                .withCost(cost).build();
         tripService.saveTrip(travel);
+        driverService.updateDriverStateOfAttendance(driver);
+        passengerService.updatePassengerStateOfAttendance(passenger);
     }
 
-    private Driver findNearestDrive(Coordinate sourceCoordinate, Coordinate desCoordinate) {
+    private Driver findNearestDriver(Coordinate sourceCoordinate, Coordinate desCoordinate) {
         if (drivers.size() == 0)
             throw OnlineTaxiSysEx.builder()
                     .message("There is no driver.")
                     .errorCode(500).build();
+        Driver assignedDriver = drivers.get(0);
         Coordinate currentLocation = drivers.get(0).getCurrentLocation();
-        //double distance = Math.sqrt();
-        //drivers.forEach();
-        return null;
+        double minDistance = Math.sqrt((sourceCoordinate.getX() - currentLocation.getX())^2 + (sourceCoordinate.getY() - currentLocation.getY())^2);
+        for (Driver driver : drivers) {
+            currentLocation = driver.getCurrentLocation();
+            double distance = Math.sqrt((sourceCoordinate.getX() - currentLocation.getX())^2 + (sourceCoordinate.getY() - currentLocation.getY())^2);
+            if (distance < minDistance)
+                assignedDriver = driver;
+        }
+        return assignedDriver;
     }
 
     public boolean getDriverStateOfAttendance(int driverId) {

@@ -260,6 +260,7 @@ public class OnlineTaxiSys {
                 } catch (RuntimeException e) {
                     System.out.println(e.getMessage());
                 }
+                stateOfAttendance = onlineTaxiService.getDriverStateOfAttendance(driverId);
             }
         }
     }
