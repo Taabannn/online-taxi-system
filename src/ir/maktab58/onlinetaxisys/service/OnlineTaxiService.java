@@ -144,7 +144,7 @@ public class OnlineTaxiService implements OnlineTaxi {
         return (long) (sqrt * COST_PER_METER);
     }
 
-    public void assignDriverAndSave(int passengerId, PaymentMode paymentMode, Coordinate sourceCoordinate, Coordinate desCoordinate) {
+    public void assignDriverAndSave(int passengerId, PaymentMode paymentMode, Coordinate sourceCoordinate, Coordinate desCoordinate, boolean isPaid) {
         Passenger passenger = passengerService.getPassengerById(passengerId);
         drivers = driverService.getWaitingForTravelDrivers();
         Driver driver = findNearestDriver(sourceCoordinate, desCoordinate);
@@ -154,7 +154,7 @@ public class OnlineTaxiService implements OnlineTaxi {
         Trip travel = Trip.builder()
                 .withDriver(driver)
                 .withPassenger(passenger)
-                .withIsPaid(false)
+                .withIsPaid(isPaid)
                 .withSource(sourceCoordinate)
                 .withDestination(desCoordinate)
                 .withPaymentMode(paymentMode)
@@ -208,6 +208,10 @@ public class OnlineTaxiService implements OnlineTaxi {
         Trip tripByDriverId = tripService.findTripByDriverId(driverId);
         tripByDriverId.setPaid(true);
         tripService.updateTripIsPaid(tripByDriverId);
+    }
+
+    public long getPassengerBalance(int passengerId) {
+        return passengerService.getPassengerById(passengerId).getBalance();
     }
 
 

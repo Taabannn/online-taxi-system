@@ -189,7 +189,15 @@ public class OnlineTaxiSys {
         String choice = scanner.nextLine().trim();
         if (choice.equalsIgnoreCase("yes")) {
             if (paymentMode.equals(PaymentMode.CASH)) {
-                onlineTaxiService.assignDriverAndSave(passengerId, paymentMode, sourceCoordinate, desCoordinate);
+                onlineTaxiService.assignDriverAndSave(passengerId, paymentMode, sourceCoordinate, desCoordinate, false);
+            } else {
+                long balance = onlineTaxiService.getPassengerBalance(passengerId);
+                while (balance < cost) {
+                    balance = onlineTaxiService.getPassengerBalance(passengerId);
+                    System.out.println("You should deposit your account first. amount of charge: " + (cost - balance));
+                    depositPassengerWallet(passengerId);
+                }
+                onlineTaxiService.assignDriverAndSave(passengerId, paymentMode, sourceCoordinate, desCoordinate, true);
             }
         }
     }
