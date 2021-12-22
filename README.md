@@ -9,7 +9,7 @@ Files in this repo implements all functions of real online taxi system.
 
 . Download the files by pressing download button or clone this repo by the the following command in your git bash:
 
-       git clone https://github.com/Taabannn/online_shop.git
+       git clone https://github.com/Taabannn/onlineTaxiSystem.git
        
 . Open project in your Java IDE.
 
