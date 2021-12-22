@@ -2,7 +2,6 @@ package ir.maktab58.onlinetaxisys.service;
 
 import ir.maktab58.onlinetaxisys.dao.DriverDao;
 import ir.maktab58.onlinetaxisys.models.Driver;
-import ir.maktab58.onlinetaxisys.models.Passenger;
 
 import java.util.List;
 

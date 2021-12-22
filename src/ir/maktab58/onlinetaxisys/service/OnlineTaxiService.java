@@ -16,14 +16,12 @@ import ir.maktab58.onlinetaxisys.service.validator.UserAndPassValidator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnlineTaxiService implements OnlineTaxi {
+public class OnlineTaxiService {
     private final PassengerService passengerService = new PassengerService();
     private final DriverService driverService = new DriverService();
     private final TripService tripService = new TripService();
     private static final long COST_PER_METER = 1000;
     List<Driver> drivers = new ArrayList<>();
-    ArrayList<Passenger> passengers = new ArrayList<>();
-    ArrayList<Trip> travels = new ArrayList<>();
 
     public List<Passenger> getAllPassengers() {
         return passengerService.getAllPassengers();
