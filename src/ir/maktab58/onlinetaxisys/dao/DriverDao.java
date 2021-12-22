@@ -1,8 +1,7 @@
 package ir.maktab58.onlinetaxisys.dao;
 
-import ir.maktab58.onlinetaxisys.enumeration.StateOfAttendance;
-import ir.maktab58.onlinetaxisys.utils.SessionUtil;
 import ir.maktab58.onlinetaxisys.models.Driver;
+import ir.maktab58.onlinetaxisys.utils.SessionUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;

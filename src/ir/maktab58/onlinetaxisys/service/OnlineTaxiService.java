@@ -214,50 +214,7 @@ public class OnlineTaxiService implements OnlineTaxi {
         return passengerService.getPassengerById(passengerId).getBalance();
     }
 
-
-    /*
-    private void applyForTravelPayFromYourBalance(Passenger passenger){
-        Travel travel = getSourceAndDestination(passenger, true);
-        if (travel.getCost() <= passenger.getBalance()){
-            System.out.println("Your balance is enough.");
-            travel.setPaid(true);
-            passenger.setBalance(passenger.getBalance() - travel.getCost());
-            boolean isAdded = travelAccess.saveTravel(travel);
-            if (isAdded){
-                System.out.println("Cost of travel is: " + travel.getCost());
-                travels = travelAccess.getAllTravels(passengers, drivers);
-            } else {
-                System.out.println("Your request has not registered. Please try later!");
-                return;
-            }
-            updateAndInsertNewTravel(passenger, travel);
-        } else {
-            depositYourBalanceForATravel(travel, passenger);
-        }
+    public List<Trip> getListOfOngoingTravels() {
+        return tripService.getOngoingTravels();
     }
-
-    @Override
-    public void showOngoingTravels() {
-        boolean allowed = isUserAllowed("show", "ongoing travels");
-        if (allowed) {
-            passengers = passengerAccess.getAllPassengers();
-            drivers = driversAccess.getAllDrivers();
-            ArrayList<Travel> ongoingTravels = travelAccess.getOngoingTravels(passengers, drivers);
-            if (ongoingTravels.size() == 0) {
-                System.out.println("There is no ongoing travel to show.");
-                return;
-            }
-            for (Travel ongoingTravel : ongoingTravels) {
-                System.out.println(ongoingTravel);
-            }
-        } else
-            System.out.println("You are not allowed to see ongoing travels list.");
-        passengers = passengerAccess.getAllPassengers();
-        drivers = driversAccess.getAllDrivers();
-        ArrayList<Travel> ongoingTravels = travelAccess.getOngoingTravels(passengers, drivers);
-        if (ongoingTravels.size() == 0){
-            System.out.println("There is no ongoing travel to show.");
-            return;
-        }
-    }*/
 }

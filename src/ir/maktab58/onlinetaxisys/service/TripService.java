@@ -3,6 +3,8 @@ package ir.maktab58.onlinetaxisys.service;
 import ir.maktab58.onlinetaxisys.dao.TripDao;
 import ir.maktab58.onlinetaxisys.models.Trip;
 
+import java.util.List;
+
 /**
  * @author Taban Soleymani
  */
@@ -23,5 +25,9 @@ public class TripService {
 
     public void updateTripIsPaid(Trip tripByDriverId) {
         tripDao.update(tripByDriverId);
+    }
+
+    public List<Trip> getOngoingTravels() {
+        return tripDao.getAllOngoingTravel();
     }
 }

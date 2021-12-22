@@ -2,10 +2,7 @@ package ir.maktab58.onlinetaxisys.view;
 
 import ir.maktab58.onlinetaxisys.enumeration.PaymentMode;
 import ir.maktab58.onlinetaxisys.exceptions.OnlineTaxiSysEx;
-import ir.maktab58.onlinetaxisys.models.Admin;
-import ir.maktab58.onlinetaxisys.models.Driver;
-import ir.maktab58.onlinetaxisys.models.Passenger;
-import ir.maktab58.onlinetaxisys.models.Coordinate;
+import ir.maktab58.onlinetaxisys.models.*;
 import ir.maktab58.onlinetaxisys.service.OnlineTaxiService;
 
 import java.util.List;
@@ -75,7 +72,14 @@ public class OnlineTaxiSys {
     }
 
     private void showOngoingTravels() {
-
+        System.out.println("Only admin can see passengersInfo list");
+        isUserAllowed();
+        List<Trip> trips = onlineTaxiService.getListOfOngoingTravels();
+        if (trips.size() == 0) {
+            System.out.println("There is no ongoing travel to show.");
+            return;
+        }
+        trips.forEach(System.out::println);
     }
 
     private void passengerSignupOrLogin() {
