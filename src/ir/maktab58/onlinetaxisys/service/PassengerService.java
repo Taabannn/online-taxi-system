@@ -44,4 +44,8 @@ public class PassengerService {
         passengerById.setBalance(passengerById.getPassengerId() + charge);
         passengerDao.update(passengerById);
     }
+
+    public void updatePassengerStateOfAttendance(Passenger passenger) {
+        passengerDao.update(passenger);
+    }
 }

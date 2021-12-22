@@ -12,4 +12,12 @@ public class TripService {
     public void saveTrip(Trip travel) {
         tripDao.save(travel);
     }
+
+    public Trip findTripByDriverId(int driverId) {
+        return tripDao.findTripByDriverId(driverId);
+    }
+
+    public void updateTripStatus(Trip trip) {
+        tripDao.update(trip);
+    }
 }

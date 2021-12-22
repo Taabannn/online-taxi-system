@@ -64,4 +64,20 @@ public class DriverDao extends BaseDaoImpl<Driver> {
         }
         return driver;
     }
+
+    public Driver finDriverById(int driverId) {
+        Driver driver;
+        try {
+            Session session = SessionUtil.getSession();
+            Transaction transaction = session.beginTransaction();
+            Query<Driver> query = session.createQuery("from Driver d where d.id=:id", Driver.class);
+            query.setParameter("id", driverId);
+            driver = query.getSingleResult();
+            transaction.commit();
+            session.close();
+        } catch (NoResultException e) {
+            driver = null;
+        }
+        return driver;
+    }
 }

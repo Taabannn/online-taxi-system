@@ -34,4 +34,12 @@ public class DriverService {
             return  driver.getDriverId();
         return 0;
     }
+
+    public Driver getDriverById(int driverId) {
+        return driverDao.finDriverById(driverId);
+    }
+
+    public void updateDriverStateOfAttendance(Driver driver) {
+        driverDao.update(drivers);
+    }
 }

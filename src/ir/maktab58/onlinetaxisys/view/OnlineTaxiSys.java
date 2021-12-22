@@ -130,7 +130,8 @@ public class OnlineTaxiSys {
                 System.out.println("""
                         **********Passenger Menu**********
                         1) Apply for a new travel (pay cash)
-                        2) Apply for a new travel (pay from your balance)3) Deposit your balance
+                        2) Apply for a new travel (pay from your balance)
+                        3) Deposit your balance
                         4) Back to main menu""");
                 String choice = scanner.nextLine().trim();
                 try {
@@ -191,8 +192,6 @@ public class OnlineTaxiSys {
                 onlineTaxiService.assignDriverAndSave(passengerId, paymentMode, sourceCoordinate, desCoordinate);
             }
         }
-
-
     }
 
     private void driverSignupOrLogin() {
@@ -237,6 +236,40 @@ public class OnlineTaxiSys {
     }
 
     private void showDriverMenu(int driverId) {
+        boolean stateOfAttendance = onlineTaxiService.getDriverStateOfAttendance(driverId);
+        if (!stateOfAttendance)
+            System.out.println("You're still waiting for travel.");
+        else {
+            boolean exit = false;
+            while (stateOfAttendance && !exit){
+                System.out.println("""
+                        **********Driver Menu**********
+                        1) Confirm passenger payment
+                        2) Travel is finished
+                        3) Back to main menu""");
+                String choice = scanner.nextLine().trim();
+                try {
+                    switch (choice) {
+                        case "1" -> confirmPassengerPayment(driverId);
+                        case "2" -> confirmTravelIsFinished(driverId);
+                        case "3" -> exit = true;
+                        default -> throw OnlineTaxiSysEx.builder()
+                                .message("Invalid input command. Your choice must be an integer between 1 to 4.")
+                                .errorCode(400).build();
+                    }
+                } catch (RuntimeException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void confirmTravelIsFinished(int driverId) {
+        onlineTaxiService.confirmTravelHasFinished(driverId);
+    }
+
+    private void confirmPassengerPayment(int driverId) {
+
 
     }
 

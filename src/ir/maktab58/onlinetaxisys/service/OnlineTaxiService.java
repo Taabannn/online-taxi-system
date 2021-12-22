@@ -172,6 +172,23 @@ public class OnlineTaxiService implements OnlineTaxi {
         return null;
     }
 
+    public boolean getDriverStateOfAttendance(int driverId) {
+        Driver driver = driverService.getDriverById(driverId);
+        return driver.getStateOfAttendance().equals(StateOfAttendance.IN_TRAVEL);
+    }
+
+    public void confirmTravelHasFinished(int driverId) {
+        Trip trip = tripService.findTripByDriverId(driverId);
+        trip.setStatus(TripStatus.FINISHED);
+        tripService.updateTripStatus(trip);
+        Driver driver = trip.getDriver();
+        driver.setStateOfAttendance(StateOfAttendance.WAITING_FOR_TRAVEL);
+        Passenger passenger = trip.getPassenger();
+        passenger.setStateOfAttendance(StateOfAttendance.WAITING_FOR_TRAVEL);
+        driverService.updateDriverStateOfAttendance(driver);
+        passengerService.updatePassengerStateOfAttendance(passenger);
+    }
+
 
     /*
     private void showDriverMenu(Driver driver){
